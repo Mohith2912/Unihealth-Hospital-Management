@@ -1,0 +1,264 @@
+:root {
+  --bg-main: #f5f7fb;
+  --text-main: #111827;
+  --muted: #6b7280;
+  --border-soft: #e5e7eb;
+  --card-bg: #ffffff;
+  --accent: #0f766e;
+  --accent-blue: #0f7edb;
+}
+
+/* Dark mode */
+body.dark {
+  background-color: #020617;
+  color: #e5e7eb;
+}
+
+body.dark .em-shell {
+  background: radial-gradient(circle at top left, #020617, #020617 45%, #000);
+}
+
+body.dark .em-card,
+body.dark .em-panel {
+  background: #020617;
+  border-color: #374151;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+}
+
+body.dark .em-title,
+body.dark .em-panel-title,
+body.dark .em-status-text {
+  color: #e5e7eb;
+}
+
+body.dark .em-banner {
+  border-color: #4b5563;
+}
+
+/* Layout */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+.em-shell {
+  min-height: 100vh;
+  padding: 24px 32px 32px;
+  background: radial-gradient(circle at top left, #e0f2fe, #f9fafb 45%, #eff6ff);
+}
+
+/* Header */
+.em-header {
+  margin-bottom: 14px;
+}
+
+.em-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.em-sub {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.em-last-updated {
+  font-size: 0.75rem;
+  color: var(--muted);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-soft);
+  background: #ffffff;
+}
+
+/* Banner */
+.em-banner {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: 1px solid #fecaca;
+  background: linear-gradient(90deg, #fee2e2, #fee2e2 40%, #fef9c3 100%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.em-banner-text {
+  font-weight: 600;
+}
+
+#emStatusPill {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.em-status-select {
+  width: 140px;
+  margin-left: auto;
+}
+
+/* Metric cards */
+.em-card {
+  background: var(--card-bg);
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.em-card-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.em-card-main {
+  font-size: 1.9rem;
+  font-weight: 800;
+}
+
+.em-card-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.em-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a;
+  font-size: 1.1rem;
+}
+
+.em-card-icon.beds {
+  background: #e0f2fe;
+  color: #1d4ed8;
+}
+
+.em-card-icon.icu {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.em-card-icon.wait {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.em-card-icon.docs {
+  background: #dcfce7;
+  color: #166534;
+}
+
+/* Panels */
+.em-panel {
+  background: var(--card-bg);
+  border-radius: 18px;
+  border: 1px solid var(--border-soft);
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.em-panel-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.em-chip-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: #ecfdf3;
+  color: #166534;
+}
+
+.em-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #22c55e;
+}
+
+/* Emergency status panel */
+.em-status-text {
+  font-size: 0.85rem;
+  margin-top: 8px;
+}
+
+.em-status-points {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* Occupancy */
+.em-occupancy-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.em-progress {
+  height: 11px;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.em-progress .progress-bar {
+  background: linear-gradient(90deg, #0f7edb, #10b981);
+}
+
+.em-panel-note {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* Activity list */
+.em-panel-activity {
+  max-height: 220px;
+}
+
+.em-activity-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  font-size: 0.8rem;
+}
+
+.em-activity-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.em-activity-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #38bdf8;
+  margin-right: 6px;
+}
+
+.em-activity-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .em-shell {
+    padding: 16px;
+  }
+}

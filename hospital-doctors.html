@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>UniHealth Doctor Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="hospital-style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="app-sidebar">
+      <!-- Top user chip -->
+      <div class="sidebar-user sidebar-user-top">
+        <div class="sidebar-user-avatar">
+          <span>A</span>
+        </div>
+        <div>
+          <div>Admin User</div>
+          <div class="text-muted small">
+            Hospital ID
+            <span id="sidebarHospitalId">UH-HOS-00000</span>
+          </div>
+        </div>
+        <button
+          class="btn btn-sm btn-outline-secondary ms-auto sidebar-logout-btn"
+          type="button"
+          onclick="handleHospitalLogout()"
+        >
+          Logout
+        </button>
+      </div>
+
+      <!-- Brand -->
+      <div class="sidebar-brand">
+        <div class="brand-logo-image">
+          <span>H</span>
+        </div>
+        <div>
+          <div class="brand-title">UniHealth Hospital</div>
+          <div class="brand-subtitle">Emergency Dashboard</div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav">
+        <a href="hospital-dashboard.html" class="sidebar-link">
+          <i class="fa-solid fa-gauge"></i>
+          Dashboard
+        </a>
+        <a href="hospital-beds.html" class="sidebar-link">
+          <i class="fa-solid fa-bed-pulse"></i>
+          Bed Management
+        </a>
+        <a href="hospital-doctors.html" class="sidebar-link active">
+          <i class="fa-solid fa-user-doctor"></i>
+          Doctors
+        </a>
+        <a href="hospital-analytics.html" class="sidebar-link">
+          <i class="fa-solid fa-chart-line"></i>
+          Analytics
+        </a>
+        <a href="hospital-audit.html" class="sidebar-link">
+          <i class="fa-solid fa-clipboard-list"></i>
+          Audit Logs
+        </a>
+        <a href="hospital-tokens.html" class="sidebar-link">
+          <i class="fa-solid fa-ticket"></i>
+          Tokens
+        </a>
+      </nav>
+
+      <!-- Admin bottom -->
+      <div class="sidebar-user sidebar-user-bottom">
+        <div class="sidebar-user-avatar">
+          <span>A</span>
+        </div>
+        <div>
+          <div>Admin User</div>
+          <div class="text-muted small">
+            Hospital ID
+            <span id="sidebarHospitalIdBottom">UH-HOS-00000</span>
+          </div>
+        </div>
+        <button
+          class="btn btn-sm btn-outline-secondary ms-auto sidebar-logout-btn"
+          type="button"
+          onclick="handleHospitalLogout()"
+        >
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <main class="app-main" id="doctorsPageRoot">
+      <!-- Header -->
+      <div class="app-header-row">
+        <div>
+          <h1 class="h4 mb-1">Doctor Management</h1>
+          <div class="text-muted small">
+            <span id="docSummaryText">0 of 0 doctors currently on duty</span>
+          </div>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button
+            class="btn btn-sm btn-primary"
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#addDoctorModal"
+          >
+            <i class="fa-solid fa-user-plus me-1"></i> Add Doctor
+          </button>
+          <button
+            class="btn btn-sm btn-outline-secondary rounded-circle"
+            id="themeToggleBtn"
+            type="button"
+            onclick="toggleTheme()"
+          >
+            <i class="fa-solid fa-moon"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Emergency mode control -->
+      <section class="panel panel-lg mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <div>
+            <div
+              class="badge bg-warning-subtle text-warning-emphasis small"
+            >
+              EMERGENCY MODE ACTIVE · BUSY
+            </div>
+            <div class="small text-muted mt-1">
+              High patient load. Adjust duty status if required.
+            </div>
+          </div>
+          <div>
+            <select
+              id="docEmStatusSelect"
+              class="form-select form-select-sm"
+              style="max-width: 180px"
+              onchange="handleEmergencyStatusChange(this.value)"
+            >
+              <option value="normal">Normal</option>
+              <option value="busy" selected>Busy</option>
+              <option value="overloaded">Overloaded</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Doctor cards (dynamic) -->
+      <section class="panel panel-lg">
+        <div class="row g-3" id="doctorCardsWrapper">
+          <div class="col-12 text-muted small">Loading doctors…</div>
+        </div>
+
+        <div class="small text-muted mt-3" id="docAiHint">
+          AI Suggestion: Current staffing is adequate for busy load.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add Doctor Modal -->
+  <div
+    class="modal fade"
+    id="addDoctorModal"
+    tabindex="-1"
+    aria-labelledby="addDoctorModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addDoctorModalLabel">Add Doctor</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form id="addDoctorForm">
+            <div class="row g-3">
+              <!-- Identity -->
+              <div class="col-md-4">
+                <label class="form-label">First Name</label>
+                <input type="text" class="form-control" id="docFirstName" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Middle Name</label>
+                <input type="text" class="form-control" id="docMiddleName" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="docLastName" required />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="docDob" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Gender</label>
+                <select class="form-select" id="docGender">
+                  <option value="">Select</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <!-- Contact -->
+              <div class="col-md-4">
+                <label class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="docPhone" />
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" id="docEmail" />
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Residential Address</label>
+                <textarea
+                  class="form-control"
+                  id="docAddress"
+                  rows="2"
+                ></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Emergency Contact</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docEmergencyContact"
+                  placeholder="Name, relationship, phone"
+                />
+              </div>
+
+              <!-- License -->
+              <div class="col-md-4">
+                <label class="form-label">Medical License Number *</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docLicenseNumber"
+                  required
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Issuing Authority</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docIssuingAuthority"
+                  placeholder="Medical Council / Board"
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">License Expiry Date</label>
+                <input type="date" class="form-control" id="docLicenseExpiry" />
+              </div>
+
+              <!-- Professional -->
+              <div class="col-md-4">
+                <label class="form-label">Specialization</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docSpecialization"
+                  placeholder="Cardiology, Pediatrics..."
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Degrees &amp; Certifications</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docDegrees"
+                  placeholder="MBBS, MD, MS..."
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Years of Experience</label>
+                <input
+                  type="number"
+                  min="0"
+                  class="form-control"
+                  id="docExperience"
+                />
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Previous Hospitals/Clinics</label>
+                <textarea
+                  class="form-control"
+                  id="docPreviousHospitals"
+                  rows="2"
+                ></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label">Professional Memberships</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docMemberships"
+                  placeholder="IMA, AMA..."
+                />
+              </div>
+
+              <!-- Assignment -->
+              <div class="col-md-4">
+                <label class="form-label">Department Assigned</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docDepartment"
+                  placeholder="Surgery, Pediatrics..."
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Consultation Start Time</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="docStartTime"
+                  required
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Consultation End Time</label>
+                <input
+                  type="time"
+                  class="form-control"
+                  id="docEndTime"
+                  required
+                />
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Room / OPD Number</label>
+                <input type="text" class="form-control" id="docRoom" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Preferred Appointment Slots</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docPreferredSlots"
+                  placeholder="10–12, 4–6..."
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Languages Spoken</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="docLanguages"
+                  placeholder="English, Hindi..."
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary btn-sm"
+            id="btnSaveDoctor"
+          >
+            Save Doctor
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="firebase.js"></script>
+  <script src="hospital-auth.js"></script>
+
+  <script>
+    function handleHospitalLogout() {
+      localStorage.removeItem('hospitalId');
+      window.location.href = 'hospital-index.html';
+    }
+
+    // sync IDs in sidebar
+    (function initHospitalIds() {
+      const hid = localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+      const top = document.getElementById('sidebarHospitalId');
+      const bottom = document.getElementById('sidebarHospitalIdBottom');
+      if (top) top.textContent = hid;
+      if (bottom) bottom.textContent = hid;
+    })();
+
+    function getHospitalId() {
+      return localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+    }
+
+    function handleEmergencyStatusChange(status) {
+      const hospitalId = getHospitalId();
+      if (!window.uhDbRef || !window.uhDbUpdate) return;
+      const ref = uhDbRef('Hospitals/' + hospitalId + '/stats');
+      uhDbUpdate(ref, { emergencyStatus: status });
+      if (window.addAuditEntry) {
+        addAuditEntry('EMERGENCY_STATUS_CHANGED', 'Status -> ' + status);
+      }
+    }
+
+    function buildDoctorCard(key, doc) {
+      const statusLabel = doc.dutyStatus || (doc.onDuty ? 'ON_DUTY' : 'OFF_DUTY') || 'ON_DUTY';
+      const statusClass =
+        statusLabel === 'ON_DUTY'
+          ? 'badge bg-success-subtle text-success-emphasis ms-auto doc-pill'
+          : statusLabel === 'BREAK'
+          ? 'badge bg-warning-subtle text-warning-emphasis ms-auto doc-pill'
+          : 'badge bg-secondary-subtle text-secondary-emphasis ms-auto doc-pill';
+
+      // Name: prefer first/middle/last, fallback to doc.name
+      const first = doc.firstName || '';
+      const middle = doc.middleName || '';
+      const last = doc.lastName || '';
+      let fullName = [first, middle, last].filter(Boolean).join(' ');
+      if (!fullName && doc.name) {
+        fullName = doc.name;
+      }
+      if (!fullName) {
+        fullName = 'Doctor';
+      }
+
+      const specialization = doc.specialization || '';
+      const degrees = doc.degrees || '';
+      const specLine =
+        specialization && degrees
+          ? specialization + ' · ' + degrees
+          : specialization || degrees || '';
+
+      const startLabel = doc.startTimeLabel || '';
+      const endLabel = doc.endTimeLabel || '';
+
+      function fallbackFormat(t) {
+        if (!t || typeof t !== 'string') return '';
+        const parts = t.split(':');
+        if (parts.length === 1) return t; // already formatted like "8:00 AM"
+        const h = parseInt(parts[0], 10);
+        const m = parseInt(parts[1] || '0', 10);
+        if (isNaN(h) || isNaN(m)) return t;
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hh = ((h + 11) % 12) + 1;
+        return hh + ':' + (m < 10 ? '0' + m : m) + ' ' + ampm;
+      }
+
+      const startText = startLabel || fallbackFormat(doc.startTime);
+      const endText = endLabel || fallbackFormat(doc.endTime);
+      const timeRange = startText && endText ? startText + ' – ' + endText : '';
+
+      const expText = doc.experience
+        ? doc.experience + ' years'
+        : (doc.experienceText || '');
+
+      const deptText = doc.department || 'Not assigned';
+      const langs = doc.languages || '—';
+
+      const card = document.createElement('div');
+      card.className = 'col-12';
+      card.innerHTML = `
+        <div class="panel doc-card">
+          <div class="d-flex align-items-center mb-3">
+            <img
+              src="doctor-hos.jpg"
+              alt="Doctor"
+              class="rounded-circle me-3"
+              style="width: 56px; height: 56px; object-fit: cover"
+            />
+            <div class="flex-grow-1">
+              <div class="d-flex align-items-center gap-2">
+                <span class="doc-status-dot"></span>
+                <div class="fw-semibold">${fullName}</div>
+              </div>
+              <div class="text-muted small">${specLine}</div>
+              <div class="text-muted small">
+                <i class="fa-regular fa-clock me-1"></i>
+                <span class="doc-time-range">${timeRange}</span>
+              </div>
+            </div>
+            <span class="${statusClass}">
+              ${statusLabel}
+            </span>
+          </div>
+
+          <div class="small mb-2">
+            <strong>Department:</strong> ${deptText} ·
+            <strong>Experience:</strong> ${expText || '—'}
+          </div>
+          <div class="small mb-2">
+            <strong>Languages:</strong> ${langs}
+          </div>
+
+          <hr class="my-2" />
+
+          <div class="d-flex justify-content-between align-items-center small">
+            <span>Duty Status</span>
+            <div class="form-check form-switch m-0">
+              <input
+                class="form-check-input doc-toggle"
+                type="checkbox"
+                ${statusLabel === 'ON_DUTY' ? 'checked' : ''}
+                onchange="updateDoctorStatus('${key}', this.checked)"
+              />
+            </div>
+          </div>
+        </div>
+      `;
+      return card;
+    }
+
+    function updateDoctorStatus(key, isOnDuty) {
+      const hospitalId = getHospitalId();
+      if (!window.uhDbRef || !window.uhDbUpdate) return;
+      const ref = uhDbRef('Hospitals/' + hospitalId + '/doctors/' + key);
+      uhDbUpdate(ref, { dutyStatus: isOnDuty ? 'ON_DUTY' : 'OFF_DUTY', onDuty: isOnDuty });
+      if (window.addAuditEntry) {
+        addAuditEntry(
+          'DOCTOR_STATUS_UPDATED',
+          'Doctor ' + key + ' dutyStatus -> ' + (isOnDuty ? 'ON_DUTY' : 'OFF_DUTY')
+        );
+      }
+    }
+
+    function saveDoctor() {
+      const hospitalId = getHospitalId();
+      if (!window.uhDbRef || !window.uhDbUpdate) {
+        alert('Database not ready.');
+        return;
+      }
+
+      const firstName = document.getElementById('docFirstName').value.trim();
+      const middleName = document.getElementById('docMiddleName').value.trim();
+      const lastName = document.getElementById('docLastName').value.trim();
+      const specialization = document
+        .getElementById('docSpecialization')
+        .value.trim();
+      const degrees = document.getElementById('docDegrees').value.trim();
+      const experience = document.getElementById('docExperience').value.trim();
+      const department = document.getElementById('docDepartment').value.trim();
+      const startTime = document.getElementById('docStartTime').value;
+      const endTime = document.getElementById('docEndTime').value;
+      const languages = document.getElementById('docLanguages').value.trim();
+
+      if (!firstName || !lastName || !department || !startTime || !endTime) {
+        alert('Please fill First Name, Last Name, Department and timings.');
+        return;
+      }
+
+      function formatTimeLabel(t) {
+        if (!t) return '';
+        const [h, m] = t.split(':').map(Number);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hh = ((h + 11) % 12) + 1;
+        return hh + ':' + (m < 10 ? '0' + m : m) + ' ' + ampm;
+      }
+
+      const doctorData = {
+        firstName,
+        middleName,
+        lastName,
+        name: `Dr. ${firstName}${lastName ? ' ' + lastName : ''}`,
+        specialization,
+        degrees,
+        experience,
+        department,
+        startTime,
+        endTime,
+        startTimeLabel: formatTimeLabel(startTime),
+        endTimeLabel: formatTimeLabel(endTime),
+        languages,
+        dutyStatus: 'ON_DUTY',
+        onDuty: true
+      };
+
+      const baseRef = uhDbRef('Hospitals/' + hospitalId + '/doctors');
+      const newRef = baseRef.push();
+
+      newRef.set(doctorData, (err) => {
+        if (err) {
+          alert('Failed to save doctor. Try again.');
+          return;
+        }
+        if (window.addAuditEntry) {
+          const fullName = firstName + (lastName ? ' ' + lastName : '');
+          addAuditEntry('DOCTOR_ADDED', 'Added doctor ' + fullName);
+        }
+        document.getElementById('addDoctorForm').reset();
+        const modal = bootstrap.Modal.getInstance(
+          document.getElementById('addDoctorModal')
+        );
+        if (modal) modal.hide();
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const hospitalId = getHospitalId();
+      const wrapper = document.getElementById('doctorCardsWrapper');
+      const summaryText = document.getElementById('docSummaryText');
+      const aiHint = document.getElementById('docAiHint');
+
+      if (!wrapper || !window.uhDbRef || !window.uhDbOnValue) return;
+
+      const ref = uhDbRef('Hospitals/' + hospitalId + '/doctors');
+
+      uhDbOnValue(ref, (snap) => {
+        wrapper.innerHTML = '';
+
+        if (!snap.exists()) {
+          wrapper.innerHTML =
+            '<div class="col-12 text-muted small">No doctors configured yet. Use "Add Doctor" to register.</div>';
+          summaryText.textContent = '0 of 0 doctors currently on duty';
+          if (aiHint) {
+            aiHint.textContent =
+              'AI Suggestion: Add at least one Emergency doctor for peak hours.';
+          }
+          const statsRef = uhDbRef('Hospitals/' + hospitalId + '/stats');
+          uhDbUpdate(statsRef, { doctorsOnDuty: 0 });
+          return;
+        }
+
+        let total = 0;
+        let onDuty = 0;
+
+        snap.forEach((child) => {
+          const key = child.key;
+          const doc = child.val() || {};
+          total++;
+          if (doc.dutyStatus === 'ON_DUTY' || doc.onDuty === true) onDuty++;
+
+          const card = buildDoctorCard(key, doc);
+          wrapper.appendChild(card);
+        });
+
+        summaryText.textContent =
+          onDuty + ' of ' + total + ' doctors currently on duty';
+
+        if (aiHint) {
+          if (onDuty === 0) {
+            aiHint.textContent =
+              'AI Suggestion: No doctors on duty. Activate backup roster immediately.';
+          } else if (onDuty < 3) {
+            aiHint.textContent =
+              'AI Suggestion: Staffing is low. Consider adding one more Emergency / ICU doctor.';
+          } else {
+            aiHint.textContent =
+              'AI Suggestion: Current staffing is adequate for busy load.';
+          }
+        }
+
+        const statsRef = uhDbRef('Hospitals/' + hospitalId + '/stats');
+        uhDbUpdate(statsRef, { doctorsOnDuty: onDuty });
+      });
+
+      const saveBtn = document.getElementById('btnSaveDoctor');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', saveDoctor);
+      }
+    });
+  </script>
+</body>
+</html>

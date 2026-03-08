@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>UniHealth Tokens Queue</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="hospital-style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Sidebar -->
+      <aside class="app-sidebar">
+        <!-- Top admin -->
+        <div class="sidebar-user sidebar-user-top">
+          <div class="sidebar-user-avatar">
+            <span>A</span>
+          </div>
+          <div>
+            <div>Admin User</div>
+            <div class="text-muted small">
+              Hospital ID
+              <span id="sidebarHospitalId">UH-HOS-00000</span>
+            </div>
+          </div>
+          <button
+            class="btn btn-sm btn-outline-secondary ms-auto sidebar-logout-btn"
+            type="button"
+            onclick="handleHospitalLogout()"
+          >
+            Logout
+          </button>
+        </div>
+
+        <!-- Brand -->
+        <div class="sidebar-brand">
+          <div class="brand-logo-image">
+            <span>H</span>
+          </div>
+          <div>
+            <div class="brand-title">UniHealth Hospital</div>
+            <div class="brand-subtitle">Emergency Dashboard</div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="sidebar-nav">
+          <a href="hospital-dashboard.html" class="sidebar-link">
+            <i class="fa-solid fa-gauge"></i> Dashboard
+          </a>
+          <a href="hospital-beds.html" class="sidebar-link">
+            <i class="fa-solid fa-bed-pulse"></i> Bed Management
+          </a>
+          <a href="hospital-doctors.html" class="sidebar-link">
+            <i class="fa-solid fa-user-doctor"></i> Doctors
+          </a>
+          <a href="hospital-analytics.html" class="sidebar-link">
+            <i class="fa-solid fa-chart-line"></i> Analytics
+          </a>
+          <a href="hospital-audit.html" class="sidebar-link">
+            <i class="fa-solid fa-clipboard-list"></i> Audit Logs
+          </a>
+          <a href="hospital-tokens.html" class="sidebar-link active">
+            <i class="fa-solid fa-ticket"></i> Tokens
+          </a>
+        </nav>
+
+        <!-- Bottom admin -->
+        <div class="sidebar-user sidebar-user-bottom">
+          <div class="sidebar-user-avatar">
+            <span>A</span>
+          </div>
+          <div>
+            <div>Admin User</div>
+            <div class="text-muted small">
+              Hospital ID
+              <span id="sidebarHospitalIdBottom">UH-HOS-00000</span>
+            </div>
+          </div>
+          <button
+            class="btn btn-sm btn-outline-secondary ms-auto sidebar-logout-btn"
+            type="button"
+            onclick="handleHospitalLogout()"
+          >
+            Logout
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main content -->
+      <main class="app-main" id="tokensPageRoot">
+        <!-- Header -->
+        <div class="app-header-row">
+          <div>
+            <h1 class="h4 mb-1">Token Booking Management</h1>
+            <div class="text-muted small">
+              Control live queues, approvals and emergency overrides.
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span
+              class="badge bg-danger-subtle text-danger border border-danger-subtle"
+            >
+              <i class="fa-solid fa-broadcast-tower me-1"></i>
+              Live sync with patient app
+            </span>
+            <button
+              class="btn btn-sm btn-outline-secondary rounded-circle"
+              id="themeToggleBtn"
+              type="button"
+              onclick="toggleTheme()"
+            >
+              <i class="fa-solid fa-moon"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <!-- Today's bookings KPI -->
+          <div class="col-lg-4">
+            <section class="panel panel-sm">
+              <div class="d-flex align-items-center mb-2">
+                <div class="analytics-icon bg-primary-soft text-primary me-3">
+                  <i class="fa-solid fa-ticket"></i>
+                </div>
+                <div>
+                  <div class="h6 mb-0">Today's Bookings</div>
+                  <div class="text-muted small">
+                    Snapshot of all tokens created today.
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between small">
+                <div>
+                  <div class="text-muted text-uppercase small">Total Tokens</div>
+                  <div class="fw-semibold" id="tokensTotal">0</div>
+                </div>
+                <div>
+                  <div class="text-muted text-uppercase small">Emergency</div>
+                  <div class="fw-semibold text-danger" id="tokensEmergency">
+                    0
+                  </div>
+                </div>
+                <div>
+                  <div class="text-muted text-uppercase small">Pending</div>
+                  <div class="fw-semibold text-warning" id="tokensPending">
+                    0
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Live queue -->
+          <div class="col-lg-4">
+            <section class="panel panel-sm">
+              <div class="d-flex align-items-center mb-2">
+                <div class="analytics-icon bg-success-soft text-success me-3">
+                  <i class="fa-solid fa-people-group"></i>
+                </div>
+                <div>
+                  <div class="h6 mb-0">Live Queue Counter</div>
+                  <div class="text-muted small">
+                    Real-time waiting room snapshot.
+                  </div>
+                </div>
+              </div>
+              <div class="row g-2 small">
+                <div class="col-4">
+                  <div class="text-muted text-uppercase small">In Hospital</div>
+                  <div class="fw-semibold" id="tokensInHospital">0</div>
+                </div>
+                <div class="col-4">
+                  <div class="text-muted text-uppercase small">Next Token</div>
+                  <div class="fw-semibold" id="tokensNext">-</div>
+                </div>
+                <div class="col-4">
+                  <div class="text-muted text-uppercase small">Avg Time</div>
+                  <div class="fw-semibold" id="tokensAvgTime">0m</div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- Emergency override -->
+          <div class="col-lg-4">
+            <section class="panel panel-sm">
+              <div class="d-flex align-items-center mb-2">
+                <div class="analytics-icon bg-danger-soft text-danger me-3">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                  <div class="h6 mb-0">Emergency Override</div>
+                  <div class="text-muted small">
+                    When enabled, emergency tokens override normal queue.
+                  </div>
+                </div>
+              </div>
+              <div
+                class="d-flex justify-content-between align-items-center small"
+              >
+                <div>
+                  <div class="fw-semibold">Override Mode</div>
+                  <div class="text-muted small" id="overrideStatusText">
+                    Override is currently <strong>OFF</strong>. Normal queue
+                    order will be followed.
+                  </div>
+                </div>
+                <div class="form-check form-switch m-0">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="overrideToggle"
+                    onchange="toggleEmergencyOverride(this.checked)"
+                  />
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Filter live table -->
+        <section class="panel panel-lg">
+          <div
+            class="d-flex flex-wrap align-items-center gap-2 mb-3 audit-filter-bar"
+          >
+            <div class="fw-semibold small text-uppercase text-muted">
+              Today's Tokens
+            </div>
+            <div class="ms-auto d-flex align-items-center gap-2">
+              <label for="tokenFilter" class="small text-muted">Filter</label>
+              <select
+                id="tokenFilter"
+                class="form-select form-select-sm"
+                style="min-width: 160px"
+              >
+                <option value="all">All tokens</option>
+                <option value="emergency">Emergency only</option>
+                <option value="waiting">Waiting only</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table
+              class="table table-sm align-middle mb-0"
+              id="tokenTable"
+            >
+              <thead>
+                <tr>
+                  <th>Token</th>
+                  <th>Patient</th>
+                  <th>Reason</th>
+                  <th>Requested At</th>
+                  <th>Status</th>
+                  <th style="width: 260px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tokensTableBody">
+                <tr>
+                  <td colspan="6" class="text-muted">
+                    Loading live tokens...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-2 text-muted small">
+            Actions on this page automatically appear in the Audit Logs under
+            the Tokens filter.
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="firebase.js"></script>
+
+    <script>
+      function handleHospitalLogout() {
+        localStorage.removeItem('hospitalId');
+        window.location.href = 'hospital-index.html';
+      }
+
+      function initHospitalIds() {
+        const hid = localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+        const top = document.getElementById('sidebarHospitalId');
+        const bottom = document.getElementById('sidebarHospitalIdBottom');
+        if (top) top.textContent = hid;
+        if (bottom) bottom.textContent = hid;
+      }
+
+      function toggleTheme() {
+        const isDark = document.body.classList.contains('dark');
+        if (isDark) {
+          document.body.classList.remove('dark');
+          localStorage.setItem('uh-hospital-theme', 'light');
+        } else {
+          document.body.classList.add('dark');
+          localStorage.setItem('uh-hospital-theme', 'dark');
+        }
+      }
+
+      // Toggle emergency override shared with patient app
+      function toggleEmergencyOverride(enabled) {
+        const hospitalId = localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+        if (!window.uhDbRef || !window.uhDbUpdate) return;
+        const ref = uhDbRef(`Hospitals/${hospitalId}/settings`);
+        uhDbUpdate(ref, { emergencyOverride: !!enabled });
+        const txt = document.getElementById('overrideStatusText');
+        if (txt) {
+          txt.innerHTML =
+            'Override is currently <strong>' +
+            (enabled ? 'ON' : 'OFF') +
+            '</strong>. ' +
+            (enabled
+              ? 'Emergency patients will jump the queue in both web and app.'
+              : 'Normal queue order will be followed.');
+        }
+        if (window.addAuditEntry) {
+          addAuditEntry(
+            'TOKEN_OVERRIDE_TOGGLE',
+            'Emergency override set to ' + enabled
+          );
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        initHospitalIds();
+
+        const hospitalId =
+          localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+
+        const tbody = document.getElementById('tokensTableBody');
+        const totalEl = document.getElementById('tokensTotal');
+        const emergEl = document.getElementById('tokensEmergency');
+        const pendingEl = document.getElementById('tokensPending');
+        const inHospEl = document.getElementById('tokensInHospital');
+        const nextTokenEl = document.getElementById('tokensNext');
+        const avgTimeEl = document.getElementById('tokensAvgTime');
+        const filterSelect = document.getElementById('tokenFilter');
+        const overrideToggle = document.getElementById('overrideToggle');
+
+        if (!tbody || !window.uhDbRef || !window.uhDbOnValue) return;
+
+        // listen to override setting
+        const settingsRef = uhDbRef(`Hospitals/${hospitalId}/settings`);
+        uhDbOnValue(settingsRef, (snap) => {
+          const data = snap.val() || {};
+          const enabled = !!data.emergencyOverride;
+          if (overrideToggle) overrideToggle.checked = enabled;
+          const txt = document.getElementById('overrideStatusText');
+          if (txt) {
+            txt.innerHTML =
+              'Override is currently <strong>' +
+              (enabled ? 'ON' : 'OFF') +
+              '</strong>. ' +
+              (enabled
+                ? 'Emergency patients will jump the queue in both web and app.'
+                : 'Normal queue order will be followed.');
+          }
+        });
+
+        // tokens path shared with patient app: top-level "Tokens"
+        const ref = uhDbRef('Tokens');
+        let currentTokens = [];
+
+        function renderTable() {
+          const filter = filterSelect ? filterSelect.value : 'all';
+          tbody.innerHTML = '';
+
+          let total = 0;
+          let emergency = 0;
+          let pending = 0;
+          let inHospitalCount = 0;
+
+          let totalMinutes = 0;
+          let waitingCount = 0;
+
+          const rows = [];
+          const now = Date.now();
+
+          currentTokens.forEach(({ key, data }) => {
+            let status = data.status || 'Requested';
+            const reason = data.reason || '';
+            const lowerStatus = status.toLowerCase();
+            const reasonLower = reason.toLowerCase();
+            const isEmergency =
+              reasonLower.includes('emergency') ||
+              reasonLower.includes('icu') ||
+              reasonLower.includes('critical');
+
+            // filter
+            if (filter === 'emergency' && !isEmergency) return;
+            if (
+              filter === 'waiting' &&
+              !(
+                lowerStatus === 'requested' ||
+                lowerStatus === 'pending' ||
+                lowerStatus === 'waiting'
+              )
+            )
+              return;
+
+            total++;
+            if (isEmergency) emergency++;
+
+            const isWaiting =
+              lowerStatus === 'requested' ||
+              lowerStatus === 'pending' ||
+              lowerStatus === 'waiting';
+            if (isWaiting) {
+              pending++;
+              const ts = data.timestamp || now;
+              const diffMinutes = Math.max(
+                0,
+                Math.round((now - ts) / 60000)
+              );
+              const m = (data.eta || '').match(/(\d+)/);
+              if (m) {
+                totalMinutes += parseInt(m[1], 10);
+                waitingCount++;
+              }
+            }
+
+            if (lowerStatus === 'approved') inHospitalCount++;
+
+            const ts = data.timestamp || now;
+            const timeStr = new Date(ts).toLocaleTimeString();
+            const tokenId = data.tokenId || key;
+
+            let badgeClass =
+              'badge rounded-pill small bg-warning-subtle text-warning-emphasis';
+            if (lowerStatus === 'approved') {
+              badgeClass =
+                'badge rounded-pill small bg-success-subtle text-success-emphasis';
+            } else if (lowerStatus === 'cancelled') {
+              badgeClass =
+                'badge rounded-pill small bg-secondary-subtle text-secondary-emphasis';
+            }
+
+            const row = document.createElement('tr');
+            row.dataset.tokenKey = key;
+            row.dataset.tokenId = tokenId;
+            row.innerHTML = `
+              <td>${tokenId}</td>
+              <td>${data.patientName || '-'}<br />
+                <small class="text-muted">${data.phone || ''}</small>
+              </td>
+              <td>${reason || '-'}</td>
+              <td>${timeStr}</td>
+              <td>
+                <span class="${badgeClass}" data-token-status-badge>
+                  ${status}
+                </span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-success me-1"
+                        data-action="approve" data-id="${tokenId}">
+                  Approve
+                </button>
+                <button class="btn btn-sm btn-outline-secondary me-1"
+                        data-action="complete" data-id="${tokenId}">
+                  Complete
+                </button>
+                <button class="btn btn-sm btn-outline-danger me-1"
+                        data-action="cancel" data-id="${tokenId}">
+                  Cancel
+                </button>
+                <button class="btn btn-sm btn-outline-primary"
+                        data-action="set-next" data-id="${tokenId}">
+                  Set Next
+                </button>
+              </td>
+            `;
+            rows.push(row);
+          });
+
+          if (rows.length === 0) {
+            tbody.innerHTML = `
+              <tr><td colspan="6" class="text-muted">No tokens yet.</td></tr>
+            `;
+          } else {
+            rows.forEach((r) => tbody.appendChild(r));
+          }
+
+          // update KPIs
+          if (totalEl) totalEl.textContent = String(total);
+          if (emergEl) emergEl.textContent = String(emergency);
+          if (pendingEl) pendingEl.textContent = String(pending);
+          if (inHospEl) inHospEl.textContent = String(inHospitalCount);
+
+          // compute next token: first waiting by priority
+          let nextTokenNumber = '-';
+          const waitingTokens = currentTokens.filter(({ data }) => {
+            const s = (data.status || '').toLowerCase();
+            return (
+              s === 'requested' || s === 'pending' || s === 'waiting'
+            );
+          });
+          if (waitingTokens.length > 0) {
+            waitingTokens.sort((a, b) => {
+              const aEmerg =
+                (a.data.reason || '').toLowerCase().includes('emergency')
+                  ? 0
+                  : 1;
+              const bEmerg =
+                (b.data.reason || '').toLowerCase().includes('emergency')
+                  ? 0
+                  : 1;
+              if (aEmerg !== bEmerg) return aEmerg - bEmerg;
+              return (a.data.tokenId || a.key).localeCompare(
+                b.data.tokenId || b.key
+              );
+            });
+            nextTokenNumber =
+              waitingTokens[0].data.tokenId || waitingTokens[0].key;
+          }
+
+          if (nextTokenEl) nextTokenEl.textContent = nextTokenNumber;
+
+          // avg time PER waiting token
+          let avg = 0;
+          if (waitingCount > 0) {
+            avg = Math.round(totalMinutes / waitingCount);
+          }
+          if (avgTimeEl) avgTimeEl.textContent = `${avg}m`;
+
+          // write summary for dashboard
+          const hospitalIdSummary =
+            localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+
+          if (window.uhDbRef && window.uhDbUpdate && hospitalIdSummary) {
+            const summaryRef = uhDbRef(
+              `Hospitals/${hospitalIdSummary}/tokensSummary`
+            );
+
+            uhDbUpdate(summaryRef, {
+              total,
+              emergency,
+              pending,
+              inHospital: inHospitalCount,
+              nextToken: nextTokenNumber,
+              avgTimeMinutes: avg,
+            });
+
+            if (window.addAuditEntry) {
+              addAuditEntry(
+                'TOKENS_UPDATED',
+                `Next ${nextTokenNumber}, pending ${pending}, avg ${avg} min`
+              );
+            }
+          }
+        }
+
+        uhDbOnValue(ref, (snap) => {
+          currentTokens = [];
+          if (snap.exists && typeof snap.forEach === 'function') {
+            snap.forEach((child) => {
+              const data = child.val() || {};
+              if (data.hospitalId === hospitalId) {
+                currentTokens.push({
+                  key: child.key,
+                  data,
+                });
+              }
+            });
+          }
+          currentTokens.sort((a, b) => {
+            const ta = a.data.timestamp || 0;
+            const tb = b.data.timestamp || 0;
+            return tb - ta;
+          });
+          renderTable();
+        });
+
+        if (filterSelect) {
+          filterSelect.addEventListener('change', renderTable);
+        }
+
+        function updateTokenStatus(tokenId, status) {
+          const hospitalIdLocal =
+            localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+          if (!window.uhDbRef || !window.uhDbUpdate) return;
+
+          const match = currentTokens.find(
+            ({ data }) => (data.tokenId || '') === tokenId
+          );
+          if (!match) return;
+
+          const ref = uhDbRef(`Tokens/${match.key}`);
+          uhDbUpdate(ref, { status: status, hospitalId: hospitalIdLocal });
+          if (window.addAuditEntry) {
+            addAuditEntry(
+              'TOKEN_STATUS_UPDATED',
+              `Token ${tokenId} status -> ${status}`
+            );
+          }
+        }
+
+        function setNextToken(tokenId) {
+          const hospitalIdLocal =
+            localStorage.getItem('hospitalId') || 'UH-HOS-00000';
+          if (!window.uhDbRef || !window.uhDbUpdate) return;
+
+          updateTokenStatus(tokenId, 'Waiting');
+
+          const summaryRef = uhDbRef(
+            `Hospitals/${hospitalIdLocal}/tokensSummary`
+          );
+          uhDbUpdate(summaryRef, { nextToken: tokenId });
+          if (window.addAuditEntry) {
+            addAuditEntry(
+              'TOKEN_NEXT_SET',
+              `Admin set next token to ${tokenId}`
+            );
+          }
+        }
+
+        if (tbody) {
+          tbody.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-action]');
+            if (!btn) return;
+            const action = btn.getAttribute('data-action');
+            const tokenId = btn.getAttribute('data-id');
+            if (!tokenId) return;
+
+            if (action === 'approve') {
+              updateTokenStatus(tokenId, 'Approved');
+            } else if (action === 'complete') {
+              updateTokenStatus(tokenId, 'Completed');
+            } else if (action === 'cancel') {
+              updateTokenStatus(tokenId, 'Cancelled');
+            } else if (action === 'set-next') {
+              setNextToken(tokenId);
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
+
