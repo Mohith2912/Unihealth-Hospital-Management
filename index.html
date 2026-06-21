@@ -1,330 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>UniHealth Hospital Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Bootstrap & Icons -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-      rel="stylesheet"
-    />
-    <!-- App styles -->
-    <link rel="stylesheet" href="hospital-style.css" />
-  </head>
-  <body>
-    <div class="app-shell">
-      <!-- SIDEBAR -->
-      <aside class="app-sidebar">
-        <div class="sidebar-brand">
-          <div class="brand-logo-image">
-            <span>UH</span>
+<head>
+  <meta charset="UTF-8" />
+  <title>UniHealth Hospital Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="hospital-style.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <div class="auth-wrapper">
+      <!-- Left hero -->
+      <section class="auth-hero">
+        <div class="auth-logo-chip">
+          <i class="fa-solid fa-hospital"></i>
+          <span>UniHealth</span>
+          <span class="text-muted small ms-2">Hospital OS</span>
+        </div>
+        <h1>Emergency Dashboard</h1>
+        <h2>Realtime hospital control centre</h2>
+        <hr />
+        <p>
+          <strong>Trusted by Excellence.</strong> Monitor bed occupancy, ICU
+          capacity, doctors on duty, and emergency alerts in a single, secure
+          console. Connect your entire facility into one professional portal.
+        </p>
+      </section>
+
+      <!-- Right auth card -->
+      <section class="auth-panel">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <div>
+            <h2 id="authTitle">Portal Login</h2>
+            <p class="text-muted mb-0" id="authSubtitle">
+              Access your UniHealth hospital dashboard.
+            </p>
           </div>
           <div>
-            <div class="brand-title">UniHealth Hospital</div>
-            <div class="brand-subtitle">Emergency Dashboard</div>
-          </div>
-        </div>
-
-        <nav class="sidebar-nav">
-          <a href="hospital-dashboard.html" class="sidebar-link active">
-            <i class="fa-solid fa-gauge-high"></i>
-            <span>Dashboard</span>
-          </a>
-          <a href="hospital-beds.html" class="sidebar-link">
-            <i class="fa-solid fa-bed-pulse"></i>
-            <span>Bed Management</span>
-          </a>
-          <a href="hospital-doctors.html" class="sidebar-link">
-            <i class="fa-solid fa-user-doctor"></i>
-            <span>Doctors</span>
-          </a>
-          <a href="hospital-analytics.html" class="sidebar-link">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>Analytics</span>
-          </a>
-          <a href="hospital-audit.html" class="sidebar-link">
-            <i class="fa-solid fa-clipboard-list"></i>
-            <span>Audit Logs</span>
-          </a>
-          <a href="hospital-tokens.html" class="sidebar-link">
-            <i class="fa-solid fa-ticket"></i>
-            <span>Tokens</span>
-          </a>
-        </nav>
-
-        <div class="mt-4 sidebar-user">
-          <div class="sidebar-user-avatar">
-            <i class="fa-solid fa-user-nurse"></i>
-          </div>
-          <div>
-            <div class="fw-semibold small">Admin User</div>
-            <div class="text-muted smaller">
-              UH-HOS-ID:
-              <span id="sidebarHospitalId">UH-HOS-00000</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="sidebar-user-bottom mt-3">
-          <div class="text-muted smaller mb-1">
-            Logged in as Hospital Admin
-          </div>
-          <button
-            class="btn btn-sm btn-outline-secondary w-100 sidebar-logout-btn"
-            onclick="handleHospitalLogout()"
-          >
-            <i class="fa-solid fa-arrow-right-from-bracket me-1"></i>
-            Logout
-          </button>
-          <div class="text-muted smaller mt-2">
-            ID:
-            <span id="sidebarHospitalIdBottom">UH-HOS-00000</span>
-          </div>
-        </div>
-      </aside>
-
-      <!-- MAIN -->
-      <main class="app-main" id="emDashboardRoot">
-        <!-- Header -->
-        <div class="app-header-row">
-          <div>
-            <h1 class="h4 mb-1">Hospital Dashboard</h1>
-            <div class="text-muted small">
-              Live overview of doctors, beds, ICU, tokens and waiting times.
-            </div>
-          </div>
-          <div class="d-flex align-items-center gap-2">
             <button
               class="btn btn-sm btn-outline-secondary rounded-circle"
               id="themeToggleBtn"
               type="button"
-              onclick="hosToggleTheme()"
             >
               <i class="fa-solid fa-moon"></i>
             </button>
           </div>
         </div>
 
-        <!-- Emergency status banner + AI -->
-        <section
-          id="emergencyBanner"
-          class="panel panel-lg mb-3"
-          style="background: linear-gradient(90deg, #dcfce7, #e0f2fe)"
-        >
-          <div
-            class="d-flex justify-content-between align-items-start flex-wrap gap-3"
-          >
-            <div>
-              <div class="d-flex align-items-center mb-1">
-                <span
-                  id="emStatusPill"
-                  class="badge rounded-pill me-2 bg-success text-white"
-                  >NORMAL</span
-                >
-                <span
-                  class="small text-uppercase text-muted fw-semibold"
-                  >Emergency Status</span
-                >
-              </div>
-              <div class="fw-semibold" id="emStatusSentence">
-                Hospital load is currently normal.
-              </div>
-              <div class="small text-muted">
-                Status is
-                <span id="emStatusText">Normal</span>.
-                <span id="lastUpdatedLabel" class="ms-1">
-                  Last updated just now · Autosynced
-                </span>
-              </div>
-            </div>
-            <div>
-              <select
-                id="emStatusSelect"
-                class="form-select form-select-sm"
-                style="min-width: 160px"
-              >
-                <option value="normal">Normal</option>
-                <option value="busy">Busy</option>
-                <option value="overloaded">Overloaded</option>
-              </select>
+        <!-- LOGIN VIEW -->
+        <div id="login-view">
+          <div class="mb-3">
+            <label for="loginId" class="form-label">Hospital ID</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-id-card-clip"></i>
+              <input
+                type="text"
+                class="form-control"
+                id="loginId"
+                placeholder="UH-HOS-12345"
+              />
             </div>
           </div>
-          <ul class="small mt-2 mb-0" id="emAiBullets">
-            <li>AI Beds and doctors within stable range.</li>
-            <li>AI Ideal window for elective procedures.</li>
-          </ul>
-        </section>
 
-        <!-- Top row doctors, beds, ICU, tokens -->
-        <section class="row g-3 mb-3">
-          <!-- Doctors on duty -->
-          <div class="col-12 col-md-6 col-xl-6">
-            <div
-              class="panel panel-lg h-100 card-lg clickable"
-              data-nav="doctors"
+          <div class="mb-3">
+            <label for="loginPass" class="form-label">Admin Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input
+                type="password"
+                class="form-control"
+                id="loginPass"
+                placeholder="Enter password"
+              />
+            </div>
+          </div>
+
+          <button type="button" class="btn-gradient mb-2" id="loginBtn">
+            <span>ACCESS SYSTEM</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+
+          <!-- UPDATED: include Forgot UH-HOS-ID link -->
+          <div class="d-flex flex-column gap-1 small mt-2">
+            <div class="d-flex justify-content-between">
+              <button
+                class="btn btn-link p-0 text-decoration-none"
+                id="linkToRegister"
+                type="button"
+              >
+                New hospital? Register
+              </button>
+              <button
+                class="btn btn-link p-0 text-decoration-none"
+                id="linkToForgot"
+                type="button"
+              >
+                Forgot password?
+              </button>
+            </div>
+            <button
+              class="btn btn-link p-0 text-decoration-none text-start"
+              id="linkToForgotId"
+              type="button"
             >
-              <div
-                class="d-flex justify-content-between align-items-center mb-1"
-              >
-                <div class="small text-uppercase text-muted fw-semibold">
-                  Doctors on Duty
-                </div>
-                <i class="fa-solid fa-user-doctor text-primary"></i>
+              Forgot UH-HOS-ID?
+            </button>
+          </div>
+        </div>
+
+        <!-- REGISTRATION VIEW -->
+        <div id="register-view" class="d-none">
+          <div id="reg-step-1">
+            <div class="row g-2">
+              <div class="col-md-12 mb-2">
+                <label class="form-label">Hospital Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="hosName"
+                  placeholder="Medical Center Name"
+                />
               </div>
-              <div class="h4 mb-1" id="dashDoctorsOn">
-                0 on / 0 off
+              <div class="col-md-6 mb-2">
+                <label class="form-label">City / Place</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="hosPlace"
+                  placeholder="City"
+                />
               </div>
-              <div class="small text-muted" id="dashDoctorsAi">
-                AI Coverage OK for current load.
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Admin Aadhaar</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="adminAadhaar"
+                  placeholder="12-digit number"
+                />
+              </div>
+              <div class="col-12 mb-2">
+                <label class="form-label">Address</label>
+                <textarea
+                  class="form-control"
+                  id="hosAddress"
+                  rows="2"
+                  placeholder="Full physical address"
+                ></textarea>
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Admin Email</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="adminEmail"
+                  placeholder="admin@hospital.com"
+                />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Primary Phone</label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="hosPhone"
+                  placeholder="Mobile/Landline"
+                />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Phone No. 1 (Alt)</label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="hosPhone1"
+                />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Phone No. 2 (Alt)</label>
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="hosPhone2"
+                />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Set Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="regPass"
+                />
+              </div>
+              <div class="col-md-6 mb-2">
+                <label class="form-label">Confirm Password</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  id="regPassConfirm"
+                />
               </div>
             </div>
-          </div>
-
-          <!-- Bed status -->
-          <div class="col-12 col-md-6 col-xl-6">
-            <div
-              class="panel panel-lg h-100 card-lg clickable"
-              data-nav="beds"
+            <button
+              class="btn-gradient mt-3 mb-2"
+              type="button"
+              id="startOtpBtn"
             >
-              <div
-                class="d-flex justify-content-between align-items-center mb-1"
-              >
-                <div class="small text-uppercase text-muted fw-semibold">
-                  Bed Status
-                </div>
-                <i class="fa-solid fa-bed-pulse text-success"></i>
-              </div>
-              <div class="small mb-1" id="dashBeds">
-                Wards: 0 available · 0 limited · 0 full
-              </div>
-              <div class="small text-muted" id="dashBedsAi">
-                AI Capacity sufficient for now.
-              </div>
-            </div>
-          </div>
-
-          <!-- ICU units -->
-          <div class="col-12 col-md-6 col-xl-6">
-            <div
-              class="panel panel-lg h-100 card-lg clickable"
-              data-nav="icu"
+              Continue &amp; Send OTP
+            </button>
+            <button
+              class="btn btn-link p-0 small w-100"
+              type="button"
+              id="linkBackToLoginFromReg"
             >
-              <div
-                class="d-flex justify-content-between align-items-center mb-1"
-              >
-                <div class="small text-uppercase text-muted fw-semibold">
-                  ICU Units
-                </div>
-                <i class="fa-solid fa-heart-pulse text-danger"></i>
-              </div>
-              <div class="h5 mb-1" id="dashIcu">
-                0 / 0 beds occupied
-              </div>
-              <div class="small text-muted" id="dashIcuAi">
-                AI ICU load within safe range.
-              </div>
-            </div>
+              Back to login
+            </button>
           </div>
 
-          <!-- Tokens waiting time -->
-          <div class="col-12 col-md-6 col-xl-6">
-            <div
-              class="panel panel-lg h-100 card-lg clickable"
-              data-nav="tokens"
+          <div id="reg-step-2" class="d-none text-center">
+            <p class="small text-muted mb-3">
+              An OTP has been sent to your admin email/phone.
+              <br />
+              Use <strong>1234</strong> for demo.
+            </p>
+            <div class="mb-3">
+              <input
+                type="text"
+                class="form-control text-center fw-bold"
+                id="regOtp"
+                placeholder="Enter 4-digit OTP"
+                maxlength="4"
+              />
+            </div>
+            <button
+              class="btn-gradient mb-2"
+              type="button"
+              id="completeRegBtn"
             >
-              <div
-                class="d-flex justify-content-between align-items-center mb-1"
+              Verify &amp; Create Account
+            </button>
+            <div class="d-flex justify-content-between small">
+              <button
+                class="btn btn-link p-0"
+                type="button"
+                id="resendOtpBtn"
               >
-                <div class="small text-uppercase text-muted fw-semibold">
-                  Tokens Waiting
-                </div>
-                <i class="fa-solid fa-ticket text-warning"></i>
-              </div>
-              <div class="small mb-1" id="dashTokensTotals">
-                Total: 0 · Emergency: 0 · Pending: 0
-              </div>
-              <div class="small mb-1" id="dashTokensQueue">
-                In hospital: 0 · Next token: -
-              </div>
-              <div class="small mb-1">
-                Avg Waiting Time
-                <span id="dashTokensAvg">0 min</span>
-              </div>
-              <div class="small text-muted" id="dashTokensAi">
-                AI Waiting time within acceptable limits.
-              </div>
+                Resend OTP
+              </button>
+              <button
+                class="btn btn-link p-0"
+                type="button"
+                id="editRegDetailsLink"
+              >
+                Edit details
+              </button>
+            </div>
+            <div class="mt-3 text-start">
+              <label class="form-label">Assigned Hospital ID</label>
+              <input
+                type="text"
+                class="form-control bg-light"
+                id="regId"
+                readonly
+                placeholder="Generated after verification"
+              />
             </div>
           </div>
-        </section>
+        </div>
 
-        <!-- AI suggestion box -->
-        <section class="panel panel-lg">
-          <div
-            class="d-flex justify-content-between align-items-center mb-2"
-          >
-            <div>
-              <div
-                class="small text-uppercase text-muted fw-semibold"
-              >
-                AI Suggestions
-              </div>
-              <div class="small text-muted">
-                Combined view based on doctors, beds, ICU and token
-                queues.
-              </div>
+        <!-- FORGOT PASSWORD VIEW -->
+        <div id="forgot-view" class="d-none">
+          <div id="fp-step-1">
+            <div class="mb-3">
+              <label class="form-label">Registered Admin Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="fpEmail"
+                placeholder="admin@hospital.com"
+              />
             </div>
-          </div>
-          <div class="small">
-            <ul class="mb-0" id="aiCombinedSuggestions">
-              <li>
-                Suggestions adapt automatically when bed status,
-                doctors, ICU or tokens change.
-              </li>
-            </ul>
-          </div>
-        </section>
-
-        <!-- Emergency Dashboard tile -->
-        <section class="row g-3 mb-3 mt-3">
-          <div class="col-12 col-md-6 col-xl-6">
-            <div
-              class="panel panel-lg h-100 card-lg clickable"
-              data-nav="emergency-dashboard"
+            <button
+              class="btn-gradient mb-2"
+              type="button"
+              id="fpSendOtpBtn"
             >
-              <div
-                class="d-flex justify-content-between align-items-center mb-1"
-              >
-                <div class="small text-uppercase text-muted fw-semibold">
-                  Emergency Control
-                </div>
-                <i class="fa-solid fa-triangle-exclamation text-danger"></i>
-              </div>
-              <div class="h5 mb-1">
-                Live Emergency Dashboard
-              </div>
-              <div class="small text-muted">
-                View surge status, ambulance load and emergency
-                specialists in real time.
-              </div>
-            </div>
+              Send OTP
+            </button>
+            <button
+              class="btn btn-link p-0 small w-100"
+              type="button"
+              id="linkBackToLoginFromForgot"
+            >
+              Back to login
+            </button>
           </div>
-        </section>
-      </main>
+
+          <div id="fp-step-2" class="d-none text-center">
+            <p class="small text-muted">
+              Enter the OTP sent to your email (Demo: 1234)
+            </p>
+            <input
+              type="text"
+              class="form-control text-center mb-3"
+              id="fpOtp"
+              maxlength="4"
+            />
+            <button
+              class="btn-gradient mb-2"
+              type="button"
+              id="fpVerifyOtpBtn"
+            >
+              Verify OTP
+            </button>
+            <button
+              class="btn btn-link d-block mx-auto small"
+              type="button"
+              id="fpResendBtn"
+            >
+              Resend
+            </button>
+          </div>
+
+          <div id="fp-step-3" class="d-none">
+            <div class="mb-3">
+              <label class="form-label">New Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="fpNewPass"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirm New Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="fpNewPassConfirm"
+              />
+            </div>
+            <button
+              class="btn-gradient"
+              type="button"
+              id="fpSetNewPassBtn"
+            >
+              Save New Password
+            </button>
+          </div>
+        </div>
+
+        <!-- NEW: FORGOT HOSPITAL ID VIEW -->
+        <div id="forgot-id-view" class="d-none">
+          <!-- STEP 1: Email + Phone -->
+          <div id="fid-step-1">
+            <div class="mb-3">
+              <label class="form-label">Registered Admin Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="fidEmail"
+                placeholder="admin@hospital.com"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Registered Phone Number</label>
+              <input
+                type="tel"
+                class="form-control"
+                id="fidPhone"
+                placeholder="+91XXXXXXXXXX"
+              />
+            </div>
+            <button
+              class="btn-gradient mb-2"
+              type="button"
+              id="fidSendOtpBtn"
+            >
+              Send OTP
+            </button>
+            <button
+              class="btn btn-link p-0 small w-100"
+              type="button"
+              id="linkBackToLoginFromForgotId"
+            >
+              Back to login
+            </button>
+          </div>
+
+          <!-- STEP 2: OTP input -->
+          <div id="fid-step-2" class="d-none text-center">
+            <p class="small text-muted">
+              Enter the OTP sent to your registered phone number.
+              <br />
+              <strong>Demo: 1234</strong>
+            </p>
+            <input
+              type="text"
+              class="form-control text-center mb-3"
+              id="fidOtp"
+              maxlength="4"
+              placeholder="Enter 4-digit OTP"
+            />
+            <button
+              class="btn-gradient mb-2"
+              type="button"
+              id="fidVerifyOtpBtn"
+            >
+              Verify OTP
+            </button>
+            <button
+              class="btn btn-link d-block mx-auto small"
+              type="button"
+              id="fidResendBtn"
+            >
+              Resend
+            </button>
+          </div>
+
+          <!-- STEP 3: Info about email link -->
+          <div id="fid-step-3" class="d-none text-center">
+            <p class="small text-muted mb-2">
+              OTP verified successfully.
+              A secure link has been sent to your registered email containing
+              your hospital registration details. After you open that page and
+              click Save &amp; Submit, you will receive another email with your
+              old UH-HOS-ID.
+            </p>
+            <button
+              class="btn btn-outline-primary btn-sm"
+              type="button"
+              id="fidDoneBtn"
+            >
+              Back to login
+            </button>
+          </div>
+        </div>
+
+        <p class="auth-footer-text">
+          By continuing, you agree to the UniHealth Terms &amp; Privacy Policy.
+        </p>
+      </section>
     </div>
+  </div>
 
-    <!-- JS -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    ></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="firebase.js"></script>
-    <script src="hospital-auth.js"></script>
-    <script src="hospital-dashboard.js"></script>
-  </body>
+  <script src="hospital-auth.js"></script>
+</body>
 </html>
