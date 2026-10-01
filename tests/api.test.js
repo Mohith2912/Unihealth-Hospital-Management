@@ -114,6 +114,8 @@ test('status changes persist and audit entries describe server-side mutations', 
   assert.equal((await admin.get('/api/me')).body.hospital.status,'busy');
   const {body} = await admin.get('/api/audit?q=hospital.status_changed');
   assert.equal(body.total,1); assert.equal(body.items[0].actor,account.email);
+  const savedAt = new Date(body.items[0].created_at.replace(' ','T')+'Z').getTime();
+  assert.ok(Math.abs(Date.now()-savedAt)<10000,'Audit timestamps must be stored as UTC');
   await admin.post('/api/audit').send({ action:'forged' }).expect(404);
   assert.equal((await admin.get('/api/analytics')).body.daily[0].arrivals,8);
 });
