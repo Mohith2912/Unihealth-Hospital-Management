@@ -1,0 +1,27 @@
+{
+  "name": "unihealth-hospital-management",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node --env-file=.env server/index.js",
+    "dev": "node --env-file=.env --watch server/index.js",
+    "db:init": "node --env-file=.env server/migrate.js",
+    "test": "node --env-file=.env --test --test-concurrency=1 tests/*.test.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "helmet": "^8.1.0",
+    "mysql2": "^3.15.0",
+    "nodemailer": "^10.0.13",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "supertest": "^7.1.0"
+  }
+}
