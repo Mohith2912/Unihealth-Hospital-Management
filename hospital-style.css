@@ -1946,6 +1946,38 @@
     .bar-chart { gap: 8px; padding: 12px 8px; }
   }
 
+  
+  /* Live Pulse Indicators */
+  @keyframes status-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.92); }
+  }
+
+  .badge.emergency .dot, .badge.on_duty .dot {
+    animation: status-pulse 2s infinite ease-in-out;
+  }
+
+  /* Print Stylesheet for Healthcare Records */
+  @media print {
+    .sidebar, .topbar, .heading-actions, .status-control, .card-actions, .row-actions, .pagination, .auth-theme, .skip, #notice {
+      display: none !important;
+    }
+    .main-wrap {
+      width: 100% !important;
+      margin-left: 0 !important;
+    }
+    body, main#main {
+      background: #ffffff !important;
+      color: #000000 !important;
+      padding: 0 !important;
+    }
+    .panel, .doctor-card, .ward-card, .table-wrap {
+      box-shadow: none !important;
+      border: 1px solid #cccccc !important;
+      break-inside: avoid;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation: none !important;
