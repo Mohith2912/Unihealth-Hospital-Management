@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "routes": [
+    { "src": "/hospital-dashboard", "dest": "/hospital-dashboard.html" },
+    { "src": "/hospital-doctors", "dest": "/hospital-doctors.html" },
+    { "src": "/hospital-beds", "dest": "/hospital-beds.html" },
+    { "src": "/hospital-tokens", "dest": "/hospital-tokens.html" },
+    { "src": "/hospital-analytics", "dest": "/hospital-analytics.html" },
+    { "src": "/hospital-audit", "dest": "/hospital-audit.html" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
