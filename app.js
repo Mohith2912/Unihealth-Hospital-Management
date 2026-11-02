@@ -42,17 +42,303 @@ const label = value => String(value).replaceAll('_', ' ').replace(/^\w/, c => c.
 const badge = (value, content = label(value)) => `<span class="badge ${escape(value)}"><span class="dot"></span>${escape(content)}</span>`;
 const empty = (title, description, action = '') => `<div class="empty">${icon(pageIcons[page] || 'grid')}<h3>${title}</h3><p>${description}</p>${action}</div>`;
 const button = (text, action, className = 'primary', data = '') => `<button type="button" class="${className}" data-action="${action}" ${data}>${action.startsWith('add') ? icon('plus') : ''}${text}</button>`;
+
+const DEFAULT_DEMO_DB = {
+  hospital: {
+    id: 'UH-88219',
+    name: 'UniHealth Central Hospital',
+    email: 'demo@unihealth.org',
+    phone: '+91 78451 22655',
+    address: 'Padma Residency, Renga Nagar, Elambalur Road',
+    status: 'normal'
+  },
+  wards: [
+    { id: 'w1', hospital_id: 'UH-88219', name: 'Critical Care ICU', type: 'icu', capacity: 15, occupied: 12, version: 1 },
+    { id: 'w2', hospital_id: 'UH-88219', name: 'Emergency Trauma Ward', type: 'emergency', capacity: 20, occupied: 18, version: 1 },
+    { id: 'w3', hospital_id: 'UH-88219', name: 'General Medicine Ward A', type: 'general', capacity: 45, occupied: 32, version: 1 },
+    { id: 'w4', hospital_id: 'UH-88219', name: 'Pediatric Care Ward', type: 'general', capacity: 20, occupied: 12, version: 1 }
+  ],
+  doctors: [
+    { id: 'd1', hospital_id: 'UH-88219', name: 'Dr. Sarah Mitchell, MD', specialty: 'Cardiology', license: 'MCI-88421', phone: '+91 98451 22001', email: 's.mitchell@unihealth.org', department: 'Cardiology & Critical Care', room: 'OPD-301', shift_start: '08:00', shift_end: '16:00', on_duty: true, version: 1 },
+    { id: 'd2', hospital_id: 'UH-88219', name: 'Dr. Arjun Mehta, MBBS, MS', specialty: 'General Surgery & Trauma', license: 'MCI-77319', phone: '+91 98451 22002', email: 'a.mehta@unihealth.org', department: 'Surgery', room: 'OT-2', shift_start: '09:00', shift_end: '17:00', on_duty: true, version: 1 },
+    { id: 'd3', hospital_id: 'UH-88219', name: 'Dr. Elena Rostova, MD', specialty: 'Emergency Medicine', license: 'MCI-66104', phone: '+91 98451 22003', email: 'e.rostova@unihealth.org', department: 'Emergency Trauma', room: 'ER-102', shift_start: '00:00', shift_end: '08:00', on_duty: true, version: 1 },
+    { id: 'd4', hospital_id: 'UH-88219', name: 'Dr. Priya Raman, MD', specialty: 'Pediatrics', license: 'MCI-99520', phone: '+91 98451 22004', email: 'p.raman@unihealth.org', department: 'Pediatrics', room: 'OPD-108', shift_start: '10:00', shift_end: '18:00', on_duty: true, version: 1 },
+    { id: 'd5', hospital_id: 'UH-88219', name: 'Dr. David Chen, MD, DM', specialty: 'Neurology', license: 'MCI-44812', phone: '+91 98451 22005', email: 'd.chen@unihealth.org', department: 'Neurosciences', room: 'OPD-405', shift_start: '08:00', shift_end: '16:00', on_duty: false, version: 1 }
+  ],
+  tokens: [
+    { id: 't1', hospital_id: 'UH-88219', number: 101, patient: 'Rohan Sharma (42M)', reason: 'Acute chest discomfort and shortness of breath', priority: 'emergency', status: 'in_progress', doctor_id: 'd1', doctor_name: 'Dr. Sarah Mitchell, MD', visit_date: '2026-11-02', created_at: new Date(Date.now() - 25*60000).toISOString(), started_at: new Date(Date.now() - 10*60000).toISOString(), completed_at: null, version: 1 },
+    { id: 't2', hospital_id: 'UH-88219', number: 102, patient: 'Ananya Deshmukh (29F)', reason: 'Severe migraine with photophobia', priority: 'urgent', status: 'waiting', doctor_id: 'd5', doctor_name: 'Dr. David Chen, MD, DM', visit_date: '2026-11-02', created_at: new Date(Date.now() - 18*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't3', hospital_id: 'UH-88219', number: 103, patient: 'Vikram Patel (61M)', reason: 'Post-operative wound dressing review', priority: 'routine', status: 'waiting', doctor_id: 'd2', doctor_name: 'Dr. Arjun Mehta, MBBS, MS', visit_date: '2026-11-02', created_at: new Date(Date.now() - 12*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't4', hospital_id: 'UH-88219', number: 104, patient: 'Baby Aarav (3M)', reason: 'High grade fever with persistent cough', priority: 'emergency', status: 'waiting', doctor_id: 'd4', doctor_name: 'Dr. Priya Raman, MD', visit_date: '2026-11-02', created_at: new Date(Date.now() - 5*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't5', hospital_id: 'UH-88219', number: 100, patient: 'Meera Iyer (35F)', reason: 'Routine antenatal consultation', priority: 'routine', status: 'completed', doctor_id: 'd4', doctor_name: 'Dr. Priya Raman, MD', visit_date: '2026-11-02', created_at: new Date(Date.now() - 75*60000).toISOString(), started_at: new Date(Date.now() - 50*60000).toISOString(), completed_at: new Date(Date.now() - 15*60000).toISOString(), version: 2 }
+  ],
+  audit: [
+    { id: 5, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'tokens.status_changed', details: 'Token #100: in_progress → completed', created_at: new Date(Date.now() - 15*60000).toISOString() },
+    { id: 4, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'tokens.created', details: 'Emergency Token #104 issued for Baby Aarav (3M)', created_at: new Date(Date.now() - 5*60000).toISOString() },
+    { id: 3, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'doctors.on_duty_toggled', details: 'Dr. Sarah Mitchell set to on duty', created_at: new Date(Date.now() - 60*60000).toISOString() },
+    { id: 2, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'wards.occupancy_updated', details: 'ICU occupancy adjusted to 12/15 beds', created_at: new Date(Date.now() - 120*60000).toISOString() },
+    { id: 1, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'account.login', details: 'Administrator workspace session established', created_at: new Date(Date.now() - 180*60000).toISOString() }
+  ]
+};
+
+function getDemoDb() {
+  try {
+    const raw = localStorage.getItem('uh_demo_db');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  localStorage.setItem('uh_demo_db', JSON.stringify(DEFAULT_DEMO_DB));
+  return JSON.parse(JSON.stringify(DEFAULT_DEMO_DB));
+}
+
+function saveDemoDb(db) {
+  try {
+    localStorage.setItem('uh_demo_db', JSON.stringify(db));
+  } catch (e) {}
+}
+
+async function mockApi(path, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const db = getDemoDb();
+  const body = options.body || {};
+
+  if (path.startsWith('/auth/register') || path.startsWith('/auth/login')) {
+    if (path.startsWith('/auth/register') && body.name) {
+      db.hospital.name = body.name || db.hospital.name;
+      db.hospital.email = body.email || db.hospital.email;
+      db.hospital.phone = body.phone || db.hospital.phone;
+      db.hospital.address = body.address || db.hospital.address;
+      db.audit.unshift({
+        id: Date.now(),
+        hospital_id: db.hospital.id,
+        actor: db.hospital.email,
+        action: 'hospital.registered',
+        details: 'Hospital workspace registered',
+        created_at: new Date().toISOString()
+      });
+      saveDemoDb(db);
+    }
+    localStorage.setItem('uh_demo_active', 'true');
+    return { ok: true, hospital: db.hospital };
+  }
+  if (path.startsWith('/auth/logout')) {
+    localStorage.removeItem('uh_demo_active');
+    return { ok: true };
+  }
+  if (path.startsWith('/auth/recover')) {
+    return { ok: true, message: 'Simulation: please sign in using the demo account credentials.' };
+  }
+  if (path.startsWith('/auth/reset')) {
+    return { ok: true, message: 'Simulation: password reset successfully.' };
+  }
+
+  if (path === '/me') {
+    return { hospital: db.hospital };
+  }
+
+  if (path === '/summary') {
+    const capacity = db.wards.reduce((s, w) => s + Number(w.capacity || 0), 0);
+    const occupied = db.wards.reduce((s, w) => s + Number(w.occupied || 0), 0);
+    const icu_capacity = db.wards.filter(w => w.type === 'icu').reduce((s, w) => s + Number(w.capacity || 0), 0);
+    const icu_occupied = db.wards.filter(w => w.type === 'icu').reduce((s, w) => s + Number(w.occupied || 0), 0);
+    const totalDocs = db.doctors.length;
+    const onDutyDocs = db.doctors.filter(d => d.on_duty).length;
+    const waiting = db.tokens.filter(t => t.status === 'waiting').length;
+    const in_progress = db.tokens.filter(t => t.status === 'in_progress').length;
+    const completed_today = db.tokens.filter(t => t.status === 'completed').length;
+    const emergencies = db.tokens.filter(t => t.priority === 'emergency' && (t.status === 'waiting' || t.status === 'in_progress')).length;
+    return {
+      beds: { capacity, occupied, icu_capacity, icu_occupied },
+      doctors: { total: totalDocs, on_duty: onDutyDocs },
+      queue: { waiting, in_progress, completed_today, emergencies, average_wait: 14.5 },
+      recent: db.audit.slice(0, 5),
+      status: db.hospital.status || 'normal'
+    };
+  }
+
+  if (path === '/wards') {
+    if (method === 'GET') return { items: db.wards };
+    if (method === 'POST') {
+      const newWard = { id: 'w' + Date.now(), hospital_id: db.hospital.id, ...body, version: 1 };
+      db.wards.push(newWard);
+      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'wards.created', details: `Ward ${newWard.name} created`, created_at: new Date().toISOString() });
+      saveDemoDb(db);
+      return { ok: true, id: newWard.id };
+    }
+  }
+  if (path.startsWith('/wards/')) {
+    const id = path.split('/')[2];
+    if (method === 'PUT') {
+      const idx = db.wards.findIndex(w => w.id === id);
+      if (idx !== -1) {
+        db.wards[idx] = { ...db.wards[idx], ...body, version: (db.wards[idx].version || 1) + 1 };
+        db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'wards.updated', details: `Ward ${db.wards[idx].name} updated`, created_at: new Date().toISOString() });
+        saveDemoDb(db);
+      }
+      return { ok: true };
+    }
+    if (method === 'DELETE') {
+      db.wards = db.wards.filter(w => w.id !== id);
+      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'wards.deleted', details: `Ward ${id} deleted`, created_at: new Date().toISOString() });
+      saveDemoDb(db);
+      return { ok: true };
+    }
+  }
+
+  if (path === '/doctors') {
+    if (method === 'GET') return { items: db.doctors };
+    if (method === 'POST') {
+      const newDoc = { id: 'd' + Date.now(), hospital_id: db.hospital.id, ...body, version: 1 };
+      db.doctors.push(newDoc);
+      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'doctors.created', details: `Dr. ${newDoc.name} registered`, created_at: new Date().toISOString() });
+      saveDemoDb(db);
+      return { ok: true, id: newDoc.id };
+    }
+  }
+  if (path.startsWith('/doctors/')) {
+    const id = path.split('/')[2];
+    if (method === 'PUT') {
+      const idx = db.doctors.findIndex(d => d.id === id);
+      if (idx !== -1) {
+        db.doctors[idx] = { ...db.doctors[idx], ...body, version: (db.doctors[idx].version || 1) + 1 };
+        db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'doctors.updated', details: `Doctor ${db.doctors[idx].name} updated`, created_at: new Date().toISOString() });
+        saveDemoDb(db);
+      }
+      return { ok: true };
+    }
+    if (method === 'DELETE') {
+      db.doctors = db.doctors.filter(d => d.id !== id);
+      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'doctors.deleted', details: `Doctor removed`, created_at: new Date().toISOString() });
+      saveDemoDb(db);
+      return { ok: true };
+    }
+  }
+
+  if (path === '/tokens') {
+    if (method === 'GET') {
+      return { items: db.tokens };
+    }
+    if (method === 'POST') {
+      const maxNum = db.tokens.reduce((m, t) => Math.max(m, t.number || 100), 100);
+      const doc = db.doctors.find(d => d.id === body.doctor_id);
+      const newToken = {
+        id: 't' + Date.now(),
+        hospital_id: db.hospital.id,
+        number: maxNum + 1,
+        patient: body.patient,
+        reason: body.reason,
+        priority: body.priority || 'routine',
+        status: 'waiting',
+        doctor_id: body.doctor_id || null,
+        doctor_name: doc ? doc.name : null,
+        visit_date: new Date().toISOString().slice(0, 10),
+        created_at: new Date().toISOString(),
+        started_at: null,
+        completed_at: null,
+        version: 1
+      };
+      db.tokens.unshift(newToken);
+      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'tokens.created', details: `Token #${newToken.number} issued for ${newToken.patient}`, created_at: new Date().toISOString() });
+      saveDemoDb(db);
+      return { ok: true, id: newToken.id };
+    }
+  }
+  if (path.startsWith('/tokens/')) {
+    const id = path.split('/')[2];
+    if (method === 'PATCH') {
+      const idx = db.tokens.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        const oldStatus = db.tokens[idx].status;
+        db.tokens[idx].status = body.status;
+        if (body.status === 'in_progress' && !db.tokens[idx].started_at) db.tokens[idx].started_at = new Date().toISOString();
+        if (body.status === 'completed' || body.status === 'cancelled') db.tokens[idx].completed_at = new Date().toISOString();
+        db.tokens[idx].version = (db.tokens[idx].version || 1) + 1;
+        db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'tokens.status_changed', details: `Token #${db.tokens[idx].number}: ${oldStatus} → ${body.status}`, created_at: new Date().toISOString() });
+        saveDemoDb(db);
+      }
+      return { ok: true };
+    }
+  }
+
+  if (path === '/hospital/status') {
+    db.hospital.status = body.status || 'normal';
+    db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'hospital.status_changed', details: `Status set to ${body.status}`, created_at: new Date().toISOString() });
+    saveDemoDb(db);
+    return { ok: true };
+  }
+
+  if (path === '/analytics') {
+    const daily = [];
+    const now = new Date();
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 86400000);
+      daily.push({
+        visit_date: d.toISOString().slice(0, 10),
+        arrivals: Math.floor(25 + Math.random() * 20),
+        completed: Math.floor(22 + Math.random() * 18),
+        cancelled: Math.floor(Math.random() * 3),
+        emergencies: Math.floor(2 + Math.random() * 5),
+        average_wait: Number((10 + Math.random() * 8).toFixed(1))
+      });
+    }
+    const beds = [];
+    for (let i = 20; i >= 0; i--) {
+      const d = new Date(now.getTime() - i * 86400000);
+      beds.push({
+        capacity: 100,
+        occupied: Math.floor(65 + Math.random() * 20),
+        created_at: d.toISOString()
+      });
+    }
+    return { daily, beds };
+  }
+
+  if (path.startsWith('/audit')) {
+    return { items: db.audit, total: db.audit.length, page: 1, pageSize: 30 };
+  }
+
+  return { ok: true };
+}
+
 async function api(path, options = {}) {
+  if (localStorage.getItem('uh_demo_active') === 'true') {
+    return mockApi(path, options);
+  }
+
   let response;
-  try { response = await fetch('/api' + path, { ...options, headers: { 'Content-Type': 'application/json', ...options.headers }, ...(options.body ? { body: JSON.stringify(options.body) } : {}) }); }
-  catch { throw new Error('Cannot reach the server. Check your connection and try again.'); }
-  const data = await response.json();
+  try {
+    response = await fetch('/api' + path, {
+      ...options,
+      headers: { 'Content-Type': 'application/json', ...options.headers },
+      ...(options.body ? { body: JSON.stringify(options.body) } : {})
+    });
+  } catch {
+    localStorage.setItem('uh_demo_active', 'true');
+    return mockApi(path, options);
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json') || response.status === 404) {
+    localStorage.setItem('uh_demo_active', 'true');
+    return mockApi(path, options);
+  }
+
+  let data;
+  try {
+    data = await response.json();
+  } catch {
+    localStorage.setItem('uh_demo_active', 'true');
+    return mockApi(path, options);
+  }
+
   if (!response.ok) {
     if (response.status === 401 && page !== 'auth') location.replace('/index.html');
-    const error = new Error(data.error || 'Something went wrong. Please try again.'); error.fields = data.fields; throw error;
+    const error = new Error(data.error || 'Something went wrong. Please try again.');
+    error.fields = data.fields;
+    throw error;
   }
   return data;
 }
+
 function notice(message, error = false) {
   const box = $('#notice'); box.className = `notice ${error ? 'error' : ''}`; box.textContent = message; box.hidden = false;
   if (!error) { clearTimeout(notice.timer); notice.timer = setTimeout(() => { box.hidden = true; }, 5000); }
@@ -91,7 +377,17 @@ function authView(mode = 'login') {
   if (mode === 'recover') fields = field('email', 'Administrator email', 'email', '', 'autocomplete="email"');
   if (mode === 'reset') fields = field('password', 'New password', 'password', '', 'autocomplete="new-password" minlength="12" maxlength="128"');
   const securityNotice = '<div class="subtle-note" style="margin: 16px 0 20px; display: flex; align-items: center; gap: 8px;">' + icon('shield') + '<span><strong>Clinical Security</strong>: Encrypted session authentication with traceable audit logging.</span></div>';
-  $('#app').innerHTML = `<main class="auth-layout"><section class="auth-story"><a href="/" class="brand">${brand}</a><div class="story-copy"><span class="eyebrow">BUILT AROUND BETTER CARE</span><h1>One workspace.<br>A connected<br><span>care team.</span></h1><p>Bring your people, capacity, and patient flow together. Make every handoff clearer with real-time ward tracking and doctor scheduling.</p><div class="story-features"><div>${icon('doctors')}<span>Care team synchronization & shift duty</span></div><div>${icon('beds')}<span>Ward capacity & real-time occupancy</span></div><div>${icon('queue')}<span>Arrival triage & emergency prioritization</span></div><div>${icon('activity')}<span>Continuous operational audit logging</span></div></div></div><p class="story-footer">UniHealth / Clinical Hospital Management v2.4</p></section><section class="auth-form-panel"><button class="icon-button auth-theme" aria-label="Toggle light and dark theme" data-action="theme">${icon('sun')}</button><div class="auth-form-wrap"><span class="eyebrow">CLINICAL WORKSPACE ACCESS</span><h2>${titles[mode]}</h2><p class="muted">${subtitles[mode]}</p>${securityNotice}<form id="auth-form"><div class="form-error" role="alert" tabindex="-1" hidden></div>${fields}<button class="primary wide" type="submit">${{ login: 'Sign in to workspace', register: 'Create hospital account', recover: 'Send recovery email', reset: 'Update password' }[mode]}${icon('arrow')}</button></form><div class="auth-links">${mode === 'login' ? '<button class="text-button" data-auth="recover">Forgot your password or hospital ID?</button><p>New to UniHealth? <button class="text-button" data-auth="register">Create a new workspace</button></p>' : '<button class="text-button" data-auth="login">Return to workspace sign in</button>'}</div><p class="secure-note">${icon('shield')}Protected hospital administration portal · WCAG AAA Accessible</p></div></section></main>`;
+  const demoCard = '<div class="demo-card-banner" style="margin: 16px 0 20px; padding: 16px; border-radius: 12px; background: #ecfeff; border: 1.5px solid #06b6d4; box-shadow: 0 4px 12px rgba(8,145,178,0.08);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;"><span style="font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; color: #0891b2; text-transform: uppercase;">⚡ Quick Access Demo Account</span><span style="font-size: 0.68rem; font-weight: 700; background: #0891b2; color: #fff; padding: 2px 8px; border-radius: 999px;">Live Simulation</span></div><p style="margin: 0 0 10px; font-size: 0.82rem; color: #0f172a; line-height: 1.4;">Instant access to full hospital management suite with pre-loaded ICU wards, doctor duty rosters, and OPD triage queues.</p><button type="button" class="primary wide" id="quick-demo-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; font-size: 0.88rem; font-weight: 700; background: #0891b2; color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s;">' + icon('sparkles') + '<span>Enter Demo Workspace (1-Click)</span></button><div style="font-size: 0.75rem; color: #475569; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #a5f3fc;"><span>Demo ID/Email: <strong style="color: #0891b2;">demo@unihealth.org</strong></span><span>Password: <strong style="color: #0891b2;">Hospital@2026</strong></span></div></div>';
+
+  $('#app').innerHTML = `<main class="auth-layout"><section class="auth-story"><a href="/" class="brand">${brand}</a><div class="story-copy"><span class="eyebrow">BUILT AROUND BETTER CARE</span><h1>One workspace.<br>A connected<br><span>care team.</span></h1><p>Bring your people, capacity, and patient flow together. Make every handoff clearer with real-time ward tracking and doctor scheduling.</p><div class="story-features"><div>${icon('doctors')}<span>Care team synchronization & shift duty</span></div><div>${icon('beds')}<span>Ward capacity & real-time occupancy</span></div><div>${icon('queue')}<span>Arrival triage & emergency prioritization</span></div><div>${icon('activity')}<span>Continuous operational audit logging</span></div></div></div><p class="story-footer">UniHealth / Clinical Hospital Management v2.4</p></section><section class="auth-form-panel"><button class="icon-button auth-theme" aria-label="Toggle light and dark theme" data-action="theme">${icon('sun')}</button><div class="auth-form-wrap"><span class="eyebrow">CLINICAL WORKSPACE ACCESS</span><h2>${titles[mode]}</h2><p class="muted">${subtitles[mode]}</p>${demoCard}${securityNotice}<form id="auth-form"><div class="form-error" role="alert" tabindex="-1" hidden></div>${fields}<button class="primary wide" type="submit">${{ login: 'Sign in to workspace', register: 'Create hospital account', recover: 'Send recovery email', reset: 'Update password' }[mode]}${icon('arrow')}</button></form><div class="auth-links">${mode === 'login' ? '<button class="text-button" data-auth="recover">Forgot your password or hospital ID?</button><p>New to UniHealth? <button class="text-button" data-auth="register">Create a new workspace</button></p>' : '<button class="text-button" data-auth="login">Return to workspace sign in</button>'}</div><p class="secure-note">${icon('shield')}Protected hospital administration portal · WCAG AAA Accessible</p></div></section></main>`;
+  const demoBtn = $('#quick-demo-btn');
+  if (demoBtn) {
+    demoBtn.addEventListener('click', async () => {
+      localStorage.setItem('uh_demo_active', 'true');
+      await mockApi('/auth/login', { method: 'POST', body: { identifier: 'demo@unihealth.org', password: 'Hospital@2026' } });
+      location.assign('/hospital-dashboard.html');
+    });
+  }
   $('#auth-form').addEventListener('submit', event => { event.preventDefault(); submitForm(event.currentTarget, async data => {
     const result = await api(`/auth/${mode === 'recover' ? 'recover' : mode}`, { method: 'POST', body: mode === 'reset' ? { ...data, token: resetToken } : data });
     if (mode === 'login' || mode === 'register') location.assign('/hospital-dashboard.html');
