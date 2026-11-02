@@ -258,7 +258,18 @@ document.addEventListener('click', async event => {
     else if (action === 'export') exportCSV();
   } catch (error) { notice(error.message,true); target.disabled = false; }
 });
-document.addEventListener('keydown', event => { if (event.key === 'Escape') { $('#sidebar')?.classList.remove('is-open'); $('[data-action="menu"]')?.setAttribute('aria-expanded','false'); } });
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    $('#sidebar')?.classList.remove('is-open');
+    $('[data-action="menu"]')?.setAttribute('aria-expanded','false');
+    const ed = $('#editor');
+    if (ed && ed.open) ed.close();
+  }
+  if ((event.altKey && event.key === 'r') || (event.altKey && event.key === 'R')) {
+    event.preventDefault();
+    refresh();
+  }
+});
 async function init() {
   if (page === 'auth') { authView(); return; }
   try { state.hospital = (await api('/me')).hospital; shell(); await refresh(); }
