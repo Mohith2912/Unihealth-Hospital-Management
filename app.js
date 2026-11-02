@@ -17,6 +17,12 @@ const paths = {
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
   close: '<path d="m6 6 12 12M6 18 18 6"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+  eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  hospital: '<path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 9h6M12 6v6"/>',
+  activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  sparkles: '<path d="m12 3 1.91 5.89a2.12 2.12 0 0 0 1.2 1.2L21 12l-5.89 1.91a2.12 2.12 0 0 0-1.2 1.2L12 21l-1.91-5.89a2.12 2.12 0 0 0-1.2-1.2L3 12l5.89-1.91a2.12 2.12 0 0 0 1.2-1.2Z"/>',
 };
 const icon = name => `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.grid}</svg>`;
 const brand = `<span class="brand-mark" aria-hidden="true">${icon('plus')}</span><span>UniHealth<span class="brand-sub">HOSPITAL WORKSPACE</span></span>`;
