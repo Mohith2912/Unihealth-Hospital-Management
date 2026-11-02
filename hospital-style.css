@@ -1874,6 +1874,18 @@
   }
 
   @media (max-width: 768px) {
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(3px);
+    z-index: 45;
+  }
+  .sidebar-backdrop.is-open {
+    display: block;
+  }
+
     .sidebar {
       transform: translateX(-100%);
       visibility: hidden;
