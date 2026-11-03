@@ -79,3 +79,15 @@ This configuration runs locally on loopback. It is not a public deployment. For 
 Only allowlisted HTML, CSS, and browser JavaScript files are served. `.env`, database files, server source, and tests are not public. Credentials, runtime data, test screenshots, and editor files are excluded from Git.
 
 The old remote Firebase database was **not changed or erased**. This application no longer accesses it. A backup of the pre-migration working files on this machine was saved under `C:/Users/jmohi/AppData/Local/UniHealthBackups/` before replacement. Git history retains the previous committed implementation.
+
+## 🚀 Rapid Local Evaluation & Direct Demo Access
+
+You can evaluate the full UniHealth Hospital Management Suite instantly without needing a local MySQL server:
+
+- **Localhost Link**: `http://localhost:5002`
+- **Instant Demo Bypass**: `http://localhost:5002/?demo=true` or `http://localhost:5002/hospital-dashboard.html?demo=true`
+- **Preloaded Credentials**:
+  - **Administrator Email / ID**: `demo@unihealth.org`
+  - **Password**: `Hospital@2026`
+
+All ward occupancy data, specialist doctor rosters, and emergency OPD tokens run interactively in-browser with automated `localStorage` persistence.
