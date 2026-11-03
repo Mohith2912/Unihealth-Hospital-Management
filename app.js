@@ -377,7 +377,7 @@ function authView(mode = 'login') {
   if (mode === 'recover') fields = field('email', 'Administrator email', 'email', '', 'autocomplete="email"');
   if (mode === 'reset') fields = field('password', 'New password', 'password', '', 'autocomplete="new-password" minlength="12" maxlength="128"');
   const securityNotice = '<div class="subtle-note" style="margin: 16px 0 20px; display: flex; align-items: center; gap: 8px;">' + icon('shield') + '<span><strong>Clinical Security</strong>: Encrypted session authentication with traceable audit logging.</span></div>';
-  const demoCard = '<div class="demo-card-banner" style="margin: 16px 0 20px; padding: 16px; border-radius: 12px; background: #ecfeff; border: 1.5px solid #06b6d4; box-shadow: 0 4px 12px rgba(8,145,178,0.08);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;"><span style="font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; color: #0891b2; text-transform: uppercase;">⚡ Quick Access Demo Account</span><span style="font-size: 0.68rem; font-weight: 700; background: #0891b2; color: #fff; padding: 2px 8px; border-radius: 999px;">Live Simulation</span></div><p style="margin: 0 0 10px; font-size: 0.82rem; color: #0f172a; line-height: 1.4;">Instant access to full hospital management suite with pre-loaded ICU wards, doctor duty rosters, and OPD triage queues.</p><button type="button" class="primary wide" id="quick-demo-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; font-size: 0.88rem; font-weight: 700; background: #0891b2; color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: background 0.2s;">' + icon('sparkles') + '<span>Enter Demo Workspace (1-Click)</span></button><div style="font-size: 0.75rem; color: #475569; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #a5f3fc;"><span>Demo ID/Email: <strong style="color: #0891b2;">demo@unihealth.org</strong></span><span>Password: <strong style="color: #0891b2;">Hospital@2026</strong></span></div></div>';
+  const demoCard = '<div class="demo-card-banner" style="margin: 16px 0 20px; padding: 16px; border-radius: 12px; background: #ecfeff; border: 1.5px solid #06b6d4; box-shadow: 0 4px 12px rgba(8,145,178,0.08);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;"><span style="font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; color: #0891b2; text-transform: uppercase;">⚡ Quick Access Demo Account</span><span style="font-size: 0.68rem; font-weight: 700; background: #0891b2; color: #fff; padding: 2px 8px; border-radius: 999px;">Live Simulation</span></div><p style="margin: 0 0 10px; font-size: 0.82rem; color: #0f172a; line-height: 1.4;">Instant access to full hospital management suite with pre-loaded ICU wards, doctor duty rosters, and OPD triage queues.</p><a href="/hospital-dashboard.html?demo=true" class="primary wide" id="quick-demo-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 16px; font-size: 0.92rem; font-weight: 700; background: #0891b2; color: #fff; text-decoration: none; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 6px rgba(8,145,178,0.25);">' + icon('sparkles') + '<span>⚡ Direct Demo Login (Instant Access)</span></a><div style="font-size: 0.75rem; color: #475569; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #a5f3fc;"><span>Demo ID/Email: <strong style="color: #0891b2;">demo@unihealth.org</strong></span><span>Password: <strong style="color: #0891b2;">Hospital@2026</strong></span></div></div>';
 
   $('#app').innerHTML = `<main class="auth-layout"><section class="auth-story"><a href="/" class="brand">${brand}</a><div class="story-copy"><span class="eyebrow">BUILT AROUND BETTER CARE</span><h1>One workspace.<br>A connected<br><span>care team.</span></h1><p>Bring your people, capacity, and patient flow together. Make every handoff clearer with real-time ward tracking and doctor scheduling.</p><div class="story-features"><div>${icon('doctors')}<span>Care team synchronization & shift duty</span></div><div>${icon('beds')}<span>Ward capacity & real-time occupancy</span></div><div>${icon('queue')}<span>Arrival triage & emergency prioritization</span></div><div>${icon('activity')}<span>Continuous operational audit logging</span></div></div></div><p class="story-footer">UniHealth / Clinical Hospital Management v2.4</p></section><section class="auth-form-panel"><button class="icon-button auth-theme" aria-label="Toggle light and dark theme" data-action="theme">${icon('sun')}</button><div class="auth-form-wrap"><span class="eyebrow">CLINICAL WORKSPACE ACCESS</span><h2>${titles[mode]}</h2><p class="muted">${subtitles[mode]}</p>${demoCard}${securityNotice}<form id="auth-form"><div class="form-error" role="alert" tabindex="-1" hidden></div>${fields}<button class="primary wide" type="submit">${{ login: 'Sign in to workspace', register: 'Create hospital account', recover: 'Send recovery email', reset: 'Update password' }[mode]}${icon('arrow')}</button></form><div class="auth-links">${mode === 'login' ? '<button class="text-button" data-auth="recover">Forgot your password or hospital ID?</button><p>New to UniHealth? <button class="text-button" data-auth="register">Create a new workspace</button></p>' : '<button class="text-button" data-auth="login">Return to workspace sign in</button>'}</div><p class="secure-note">${icon('shield')}Protected hospital administration portal · WCAG AAA Accessible</p></div></section></main>`;
   const demoBtn = $('#quick-demo-btn');
@@ -575,8 +575,34 @@ document.addEventListener('keydown', event => {
   }
 });
 async function init() {
-  if (page === 'auth') { authView(); return; }
-  try { state.hospital = (await api('/me')).hospital; shell(); await refresh(); }
-  catch (error) { $('#app').innerHTML = `<main class="connection-error"><h1>Unable to open your workspace</h1><p>${escape(error.message)}</p><a class="primary" href="/index.html">Go to sign in</a></main>`; }
+  const isDemoUrl = window.location.search.includes('demo') || window.location.hash.includes('demo');
+  if (isDemoUrl) {
+    localStorage.setItem('uh_demo_active', 'true');
+    if (page === 'auth') {
+      location.assign('/hospital-dashboard.html');
+      return;
+    }
+  }
+
+  if (page === 'auth') {
+    authView();
+    return;
+  }
+
+  try {
+    state.hospital = (await api('/me')).hospital;
+    shell();
+    await refresh();
+  } catch (error) {
+    console.warn('Backend unavailable or session expired. Engaging Demo Workspace fallback:', error);
+    localStorage.setItem('uh_demo_active', 'true');
+    try {
+      state.hospital = (await mockApi('/me')).hospital;
+      shell();
+      await refresh();
+    } catch (fallbackErr) {
+      $('#app').innerHTML = `<main class="connection-error"><h1>Unable to open your workspace</h1><p>${escape(fallbackErr.message)}</p><a class="primary" href="/hospital-dashboard.html?demo=true">Open Demo Workspace</a></main>`;
+    }
+  }
 }
 init();
