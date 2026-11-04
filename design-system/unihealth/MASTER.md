@@ -71,3 +71,21 @@ Applied using the **UI/UX Pro Max skill** for enterprise healthcare administrati
 - **Mobile Navigation**: Collapsible sidebar with backdrop blur overlay and touch-friendly dismiss.
 - **Print Stylesheet**: Dedicated `@media print` rules hiding navigation chrome and optimizing tabular patient records for clinical printouts.
 - **Reduced Motion**: Full adherence to `prefers-reduced-motion: reduce`.
+
+## ⚡ Operational Mode Dynamic Theming & Animations
+
+The platform features a state-driven reactive design system that dynamically alters the color palette, ambient elevation, and micro-animations based on live hospital operations:
+
+### 1. Operational States
+
+| Mode | Semantic Meaning | Primary Accent | Visual Effect & Beacon |
+| :--- | :--- | :--- | :--- |
+| **Normal** | Standard Clinical Flow | `#0891b2` (Clinical Teal) | Calm breathing beacon (`2.2s`), soft emerald tint (`#ecfeff`) |
+| **Surge / Busy** | Elevated Patient Flow & OPD Surge | `#d97706` (Clinical Amber) | Accelerated pulse beacon (`1.3s`), goldenrod status strip, amber surge banner |
+| **Emergency** | Code Red Trauma & ICU Prioritization | `#dc2626` (Emergency Crimson) | 🚨 Rapid radar sonar ping (`0.85s`), full-width priority triage alert, glowing red accents |
+
+### 2. Throttling & Debounce Architecture
+
+- **Search Inputs**: Debounced at `180ms` to eliminate render thrashing during medication and patient lookup.
+- **Mode Switching**: Throttled with `350ms cubic-bezier(0.4, 0, 0.2, 1)` smooth easing to guarantee stutter-free visual shifts.
+- **Cross-App Sync**: Local storage broadcast listener (`window.addEventListener('storage')`) synchronizes mode changes across Hospital, Pharmacy, and Patient Companion simultaneously.
