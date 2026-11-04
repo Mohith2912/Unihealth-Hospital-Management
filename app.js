@@ -395,14 +395,159 @@ function authView(mode = 'login') {
   }); });
 }
 
+function applyHospitalStatus(status) {
+  state.hospital.status = status;
+  document.documentElement.dataset.hospitalStatus = status;
+  document.body.dataset.hospitalStatus = status;
+  try { localStorage.setItem('uh_hospital_status', status); } catch (e) {}
+
+  const currentStatusEl = $('#current-status');
+  if (currentStatusEl) currentStatusEl.textContent = label(status);
+
+  const topBadge = $('#topbar-status-badge');
+  if (topBadge) {
+    topBadge.className = `badge ${status}`;
+    topBadge.innerHTML = `<span class="dot"></span>${label(status)}`;
+  }
+
+  document.querySelectorAll('.mode-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === status);
+  });
+
+  const select = $('#hospital-status');
+  if (select && select.value !== status) select.value = status;
+
+  let banner = $('#emergency-active-banner');
+  if (status === 'emergency') {
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'emergency-active-banner';
+      banner.className = 'emergency-banner-alert';
+      banner.innerHTML = `
+        <div class="emergency-banner-content">
+          <div class="emergency-pulse-ring"><span class="emergency-siren-dot"></span></div>
+          <div>
+            <strong>🚨 CODE RED: EMERGENCY TRIAGE PROTOCOL ACTIVE</strong>
+            <span>All trauma bays, triage stations & ICU beds prioritised for critical incoming arrivals.</span>
+          </div>
+        </div>
+        <div class="emergency-banner-badge">Priority Triage Level 1</div>
+      `;
+      const main = $('#main');
+      if (main) main.insertBefore(banner, main.firstChild);
+    } else {
+      banner.className = 'emergency-banner-alert';
+      banner.innerHTML = `
+        <div class="emergency-banner-content">
+          <div class="emergency-pulse-ring"><span class="emergency-siren-dot"></span></div>
+          <div>
+            <strong>🚨 CODE RED: EMERGENCY TRIAGE PROTOCOL ACTIVE</strong>
+            <span>All trauma bays, triage stations & ICU beds prioritised for critical incoming arrivals.</span>
+          </div>
+        </div>
+        <div class="emergency-banner-badge">Priority Triage Level 1</div>
+      `;
+    }
+  } else if (status === 'busy' || status === 'overloaded') {
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'emergency-active-banner';
+      banner.className = 'busy-banner-alert';
+      banner.innerHTML = `
+        <div class="emergency-banner-content">
+          <div class="busy-pulse-ring"><span class="busy-dot"></span></div>
+          <div>
+            <strong>⚠️ SURGE CAPACITY PROTOCOL ACTIVE</strong>
+            <span>Heightened patient arrival flow across OPD and emergency triage. Bed reassignments in progress.</span>
+          </div>
+        </div>
+        <div class="emergency-banner-badge">Elevated Surge Mode</div>
+      `;
+      const main = $('#main');
+      if (main) main.insertBefore(banner, main.firstChild);
+    } else {
+      banner.className = 'busy-banner-alert';
+      banner.innerHTML = `
+        <div class="emergency-banner-content">
+          <div class="busy-pulse-ring"><span class="busy-dot"></span></div>
+          <div>
+            <strong>⚠️ SURGE CAPACITY PROTOCOL ACTIVE</strong>
+            <span>Heightened patient arrival flow across OPD and emergency triage. Bed reassignments in progress.</span>
+          </div>
+        </div>
+        <div class="emergency-banner-badge">Elevated Surge Mode</div>
+      `;
+    }
+  } else {
+    if (banner) banner.remove();
+  }
+}
+
 function shell() {
   const h = state.hospital;
-  $('#app').innerHTML = `<a class="skip" href="#main">Skip to main content</a><div class="workspace"><aside class="sidebar" id="sidebar"><a class="brand" href="/hospital-dashboard.html">${brand}</a><div class="workspace-tag">Hospital workspace</div><nav aria-label="Main navigation">${Object.entries(labels).map(([key, name]) => `<a href="/hospital-${key}.html" ${key === page ? 'aria-current="page" class="active"' : ''}>${icon(pageIcons[key])}<span>${name}</span>${key === page ? '<span class="nav-indicator"></span>' : ''}</a>`).join('')}</nav><div class="sidebar-bottom"><div class="care-note">${icon('shield')}<strong>Care starts with clarity.</strong><p>One shared view for your hospital operations.</p></div><div class="profile"><span class="avatar">${escape(h.name.slice(0, 2).toUpperCase())}</span><div><strong>${escape(h.name)}</strong><small>Administrator</small></div></div><button class="logout" data-action="logout">${icon('logout')}Sign out</button></div></aside><div class="main-wrap"><header class="topbar"><div class="breadcrumb"><button class="icon-button mobile-menu" data-action="menu" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">${icon('menu')}</button><span>Workspace</span><span class="separator">/</span><strong>${labels[page]}</strong></div><div class="topbar-actions"><span class="badge ${h.status}" id="topbar-status-badge"><span class="dot"></span>${label(h.status)}</span><span class="date-today">${new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' }).format(new Date())}</span><button class="icon-button" data-action="theme" aria-label="Toggle light and dark theme">${icon('sun')}</button><span class="avatar small" title="${escape(h.name)}">${escape(h.name.slice(0, 2).toUpperCase())}</span></div></header><main id="main" tabindex="-1"><div class="page-heading"><div><div class="eyebrow">HOSPITAL OPERATIONS</div><h1>${labels[page]}</h1><p>${hints[page]}</p></div><div class="heading-actions"><button class="secondary" data-action="refresh">${icon('refresh')}Refresh</button>${['doctors','beds','tokens'].includes(page) ? button({ doctors: 'Add doctor', beds: 'Add ward', tokens: 'New patient token' }[page], `add-${page}`) : ''}</div></div><div class="status-strip"><div>${icon('shield')}<span>Hospital status</span><strong id="current-status">${label(h.status)}</strong></div><label class="status-control">Set status<select id="hospital-status" aria-label="Hospital operational status">${['normal','busy','overloaded','emergency'].map(s => `<option value="${s}" ${h.status === s ? 'selected' : ''}>${label(s)}</option>`).join('')}</select></label></div><div id="content"><div class="loading" role="status">Loading your workspace…</div></div><footer class="page-footer"><span>UniHealth <span class="footer-dot">·</span> ${escape(h.id)}</span><span id="updated">Hospital time: Asia/Kolkata</span></footer></main></div></div><div id="sidebar-backdrop" class="sidebar-backdrop" data-action="close-sidebar"></div><dialog id="editor" aria-labelledby="dialog-title"></dialog>`;
+  $('#app').innerHTML = `<a class="skip" href="#main">Skip to main content</a><div class="workspace"><aside class="sidebar" id="sidebar"><a class="brand" href="/hospital-dashboard.html">${brand}</a><div class="workspace-tag">Hospital workspace</div><nav aria-label="Main navigation">${Object.entries(labels).map(([key, name]) => `<a href="/hospital-${key}.html" ${key === page ? 'aria-current="page" class="active"' : ''}>${icon(pageIcons[key])}<span>${name}</span>${key === page ? '<span class="nav-indicator"></span>' : ''}</a>`).join('')}</nav><div class="sidebar-bottom"><div class="care-note">${icon('shield')}<strong>Care starts with clarity.</strong><p>One shared view for your hospital operations.</p></div><div class="profile"><span class="avatar">${escape(h.name.slice(0, 2).toUpperCase())}</span><div><strong>${escape(h.name)}</strong><small>Administrator</small></div></div><button class="logout" data-action="logout">${icon('logout')}Sign out</button></div></aside><div class="main-wrap"><header class="topbar"><div class="breadcrumb"><button class="icon-button mobile-menu" data-action="menu" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">${icon('menu')}</button><span>Workspace</span><span class="separator">/</span><strong>${labels[page]}</strong></div><div class="topbar-actions"><span class="badge ${h.status}" id="topbar-status-badge"><span class="dot"></span>${label(h.status)}</span><span class="date-today">${new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' }).format(new Date())}</span><button class="icon-button" data-action="theme" aria-label="Toggle light and dark theme">${icon('sun')}</button><span class="avatar small" title="${escape(h.name)}">${escape(h.name.slice(0, 2).toUpperCase())}</span></div></header><main id="main" tabindex="-1"><div class="page-heading"><div><div class="eyebrow">HOSPITAL OPERATIONS</div><h1>${labels[page]}</h1><p>${hints[page]}</p></div><div class="heading-actions"><button class="secondary" data-action="refresh">${icon('refresh')}Refresh</button>${['doctors','beds','tokens'].includes(page) ? button({ doctors: 'Add doctor', beds: 'Add ward', tokens: 'New patient token' }[page], `add-${page}`) : ''}</div></div><div class="status-strip">
+  <div class="status-title-group">
+    <div class="status-icon-wrap">${icon('shield')}</div>
+    <div>
+      <span class="status-sub">Operational Mode</span>
+      <strong id="current-status">${label(h.status)}</strong>
+    </div>
+  </div>
+  <div class="status-mode-switcher" role="radiogroup" aria-label="Hospital operational mode">
+    <button type="button" class="mode-pill mode-normal ${h.status === 'normal' ? 'active' : ''}" data-mode="normal" title="Standard Clinical Operations">
+      <span class="mode-radar-dot"></span>
+      <span>Normal</span>
+    </button>
+    <button type="button" class="mode-pill mode-busy ${h.status === 'busy' ? 'active' : ''}" data-mode="busy" title="Surge Capacity & Elevated OPD">
+      <span class="mode-radar-dot"></span>
+      <span>Surge / Busy</span>
+    </button>
+    <button type="button" class="mode-pill mode-emergency ${h.status === 'emergency' ? 'active' : ''}" data-mode="emergency" title="Emergency Triage & Trauma Priority">
+      <span class="mode-radar-dot"></span>
+      <span>🚨 Emergency</span>
+    </button>
+  </div>
+  <label class="status-control">
+    <span>Quick select</span>
+    <select id="hospital-status" aria-label="Hospital operational status">
+      ${['normal','busy','overloaded','emergency'].map(s => `<option value="${s}" ${h.status === s ? 'selected' : ''}>${label(s)}</option>`).join('')}
+    </select>
+  </label>
+</div><div id="content"><div class="loading" role="status">Loading your workspace…</div></div><footer class="page-footer"><span>UniHealth <span class="footer-dot">·</span> ${escape(h.id)}</span><span id="updated">Hospital time: Asia/Kolkata</span></footer></main></div></div><div id="sidebar-backdrop" class="sidebar-backdrop" data-action="close-sidebar"></div><dialog id="editor" aria-labelledby="dialog-title"></dialog>`;
+  // Initialize status theme
+  const initialStatus = localStorage.getItem('uh_hospital_status') || h.status || 'normal';
+  applyHospitalStatus(initialStatus);
+
+  // Mode pill clicks
+  document.querySelectorAll('.mode-pill').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const mode = btn.dataset.mode;
+      if (mode === state.hospital.status) return;
+      applyHospitalStatus(mode);
+      try {
+        await api('/hospital/status', { method: 'PATCH', body: { status: mode } });
+        notice(`Operational mode switched to ${label(mode).toUpperCase()}. Visual theme updated.`);
+      } catch (err) {
+        console.warn('Mode sync warning:', err);
+      }
+    });
+  });
+
+  // Dropdown change
   $('#hospital-status').addEventListener('change', async event => {
     const control = event.target; control.disabled = true;
-    try { const result = await api('/hospital/status', { method: 'PATCH', body: { status: control.value } }); state.hospital.status = result.status; $('#current-status').textContent = label(result.status); const topBadge = $('#topbar-status-badge'); if (topBadge) { topBadge.className = `badge ${result.status}`; topBadge.innerHTML = `<span class="dot"></span>${label(result.status)}`; } notice('Hospital status updated.'); }
-    catch (error) { control.value = state.hospital.status; notice(error.message, true); }
-    finally { control.disabled = false; }
+    const newStatus = control.value;
+    applyHospitalStatus(newStatus);
+    try {
+      await api('/hospital/status', { method: 'PATCH', body: { status: newStatus } });
+      notice(`Operational mode updated to ${label(newStatus).toUpperCase()}.`);
+    } catch (error) {
+      control.value = state.hospital.status;
+      applyHospitalStatus(state.hospital.status);
+      notice(error.message, true);
+    } finally {
+      control.disabled = false;
+    }
   });
 }
 function stat(title, value, note, symbol, color = '') { return `<article class="stat ${color}"><div class="stat-top"><span>${title}</span><span class="stat-icon">${icon(symbol)}</span></div><strong class="stat-value">${value}</strong><p>${note}</p></article>`; }
