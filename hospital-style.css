@@ -1998,3 +1998,399 @@
     }
   }
 }
+
+
+/* ==========================================================================
+   DYNAMIC OPERATIONAL STATUS THEMES (Normal, Busy, Emergency)
+   Smooth visual transition, ambient radar glow, code red banner
+   ========================================================================== */
+
+html, body {
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* 1. Normal Mode (Clinical Serene Teal & Emerald) */
+:root[data-hospital-status="normal"], body[data-hospital-status="normal"] {
+  --primary: #0891b2;
+  --primary-light: #22d3ee;
+  --primary-dark: #0e7490;
+  --hover: #0e7490;
+  --tint: #ecfeff;
+  --tint-strong: #cffafe;
+  --status-theme-border: #a5f3fc;
+  --status-accent-glow: 0 4px 20px -2px rgba(8, 145, 178, 0.12);
+}
+
+/* 2. Busy / Surge Mode (Clinical Amber & Goldenrod) */
+:root[data-hospital-status="busy"], body[data-hospital-status="busy"] {
+  --primary: #d97706;
+  --primary-light: #f59e0b;
+  --primary-dark: #b45309;
+  --hover: #b45309;
+  --tint: #fffbeb;
+  --tint-strong: #fde68a;
+  --status-theme-border: #fcd34d;
+  --status-accent-glow: 0 4px 24px -2px rgba(217, 119, 6, 0.22);
+}
+
+/* 3. Emergency Mode (Critical Code Red & Crimson Siren) */
+:root[data-hospital-status="emergency"], body[data-hospital-status="emergency"],
+:root[data-hospital-status="overloaded"], body[data-hospital-status="overloaded"] {
+  --primary: #dc2626;
+  --primary-light: #ef4444;
+  --primary-dark: #b91c1c;
+  --hover: #b91c1c;
+  --tint: #fef2f2;
+  --tint-strong: #fecaca;
+  --status-theme-border: #fca5a5;
+  --status-accent-glow: 0 6px 30px -2px rgba(220, 38, 38, 0.30);
+}
+
+/* Dark Mode Overrides for Status Modes */
+:root[data-theme="dark"][data-hospital-status="normal"] {
+  --primary: #22d3ee;
+  --primary-light: #67e8f9;
+  --primary-dark: #0891b2;
+  --tint: #083344;
+  --tint-strong: #155e75;
+  --status-theme-border: #0e7490;
+}
+
+:root[data-theme="dark"][data-hospital-status="busy"] {
+  --primary: #fbbf24;
+  --primary-light: #fcd34d;
+  --primary-dark: #d97706;
+  --tint: #451a03;
+  --tint-strong: #78350f;
+  --status-theme-border: #b45309;
+}
+
+:root[data-theme="dark"][data-hospital-status="emergency"],
+:root[data-theme="dark"][data-hospital-status="overloaded"] {
+  --primary: #f87171;
+  --primary-light: #fca5a5;
+  --primary-dark: #dc2626;
+  --tint: #450a0a;
+  --tint-strong: #7f1d1d;
+  --status-theme-border: #991b1b;
+}
+
+/* Status Strip & Segmented Mode Switcher */
+.status-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  border: 1.5px solid var(--status-theme-border, var(--border));
+  border-radius: var(--radius-lg, 16px);
+  padding: 14px 22px;
+  background: var(--surface);
+  margin-bottom: 24px;
+  font-size: 13px;
+  box-shadow: var(--status-accent-glow, var(--shadow-sm));
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.status-strip::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  transition: background 0.35s ease;
+}
+
+.status-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: var(--tint);
+  border: 1px solid var(--tint-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  transition: all 0.3s ease;
+}
+
+.status-sub {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  display: block;
+  font-weight: 600;
+}
+
+.status-mode-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--soft);
+  padding: 4px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+}
+
+.mode-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.mode-pill:hover {
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.mode-pill.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.mode-pill.mode-normal.active {
+  color: #0891b2;
+}
+
+.mode-pill.mode-busy.active {
+  color: #d97706;
+}
+
+.mode-pill.mode-emergency.active {
+  color: #dc2626;
+  animation: pill-glow 2s infinite ease-in-out;
+}
+
+.mode-radar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: relative;
+}
+
+.mode-normal .mode-radar-dot { background: #10b981; }
+.mode-busy .mode-radar-dot { background: #f59e0b; }
+.mode-emergency .mode-radar-dot { background: #ef4444; }
+
+.mode-emergency.active .mode-radar-dot::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 2px solid #ef4444;
+  animation: radar-sonar 1.4s infinite ease-out;
+}
+
+@keyframes radar-sonar {
+  0% { transform: scale(0.6); opacity: 1; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes pill-glow {
+  0%, 100% { box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15); }
+  50% { box-shadow: 0 4px 16px rgba(220, 38, 38, 0.35); }
+}
+
+/* Dynamic Emergency / Busy Alert Banners */
+.emergency-banner-alert {
+  background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
+  color: #ffffff;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.35);
+  animation: banner-slide-down 0.4s ease-out;
+}
+
+.busy-banner-alert {
+  background: linear-gradient(135deg, #78350f 0%, #d97706 100%);
+  color: #ffffff;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.30);
+  animation: banner-slide-down 0.4s ease-out;
+}
+
+.emergency-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.emergency-banner-content strong {
+  display: block;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+}
+
+.emergency-banner-content span {
+  font-size: 12px;
+  opacity: 0.95;
+}
+
+.emergency-pulse-ring, .busy-pulse-ring {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-ring 1.5s infinite;
+}
+
+.emergency-siren-dot, .busy-dot {
+  width: 10px;
+  height: 10px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+
+.emergency-banner-badge {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@keyframes banner-slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(0.9); }
+}
+
+
+/* ==========================================================================
+   EXECUTIVE CLINICAL ELEVATION & MICRO-INTERACTIONS
+   Glassmorphism, crisp borders, hover micro-lifts, smooth easing
+   ========================================================================== */
+
+.stat {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(8, 145, 178, 0.4), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat:hover::after {
+  opacity: 1;
+}
+
+.panel {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.panel:hover {
+  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.08);
+}
+
+.record-card {
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+}
+
+.record-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+/* Throttled smooth transitions on interactive controls */
+.button, button.primary, button.secondary {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+button.primary:active, button.secondary:active {
+  transform: scale(0.98);
+}
+
+/* Topbar live pulse dot enhancements */
+.badge.normal .dot {
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: beacon-calm 2.2s infinite ease-out;
+}
+
+.badge.busy .dot {
+  box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.8);
+  animation: beacon-busy 1.3s infinite ease-out;
+}
+
+.badge.emergency .dot, .badge.overloaded .dot {
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.9);
+  animation: beacon-emergency 0.85s infinite ease-out;
+}
+
+@keyframes beacon-calm {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes beacon-busy {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.8); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(245, 158, 11, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+}
+
+@keyframes beacon-emergency {
+  0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.9); }
+  60% { transform: scale(1.15); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+  100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
