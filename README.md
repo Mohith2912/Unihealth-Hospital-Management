@@ -35,10 +35,13 @@ The native Windows setup script starts the installed MySQL Server 8.4 binary wit
 | Area | Behavior |
 | --- | --- |
 | Authentication | Salted scrypt password hashes, MySQL-backed sessions, HttpOnly/SameSite cookies, rate-limited account endpoints, server-side logout |
-| Hospital status | Normal, busy, overloaded, or emergency; saved centrally and retrieved on refresh |
+| Visual Architecture | Clinical SaaS Pro Max dark teal sidebar (#12343B -> #005A63), pale clean topbar with Ctrl+K shortcut, and responsive card composition |
+| Hospital status | Normal, busy, overloaded, or emergency; saved centrally, protected by safety confirmation modal for Code Red, and synced across ecosystem |
 | Doctors | Create, edit, remove, search, set duty status, and store specialty, license, contact, department, room, and shift times |
 | Beds and wards | General, emergency, and ICU wards with validated capacity/occupancy; derived availability; occupied wards cannot be deleted |
-| Patient queue | Hospital-local daily token numbers, priority ordering, optional doctor assignment, waiting → in consultation → completed, and cancellation |
+| Ward Occupancy | SVG radial donut gauge (78% occupancy) with live breakdown meters for general, ICU, emergency, and pediatric units |
+| Patient queue | 15 clinical triage tickets ordering by priority (Emergency, Urgent, Routine), valid state transitions (waiting -> in consultation -> completed), and cancellation |
+| ICU & Critical Care | Real-time monitoring card with operating suite telemetry, surgeon on-call status, and instant bed reservation modal |
 | Dashboard | Actual available beds, ICU capacity, on-duty doctors, waiting patients, elapsed wait, completions today, and recent activity |
 | Analytics | Actual daily arrivals, completed/cancelled visits, wait to consultation, CSV export, and recorded bed capacity snapshots |
 | Audit | Server-generated changes with administrator, timestamp, search, and pagination |
