@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#99c9db"/>
+      <stop offset="50%" stop-color="#d4e8f0"/>
+      <stop offset="100%" stop-color="#f0f7fa"/>
+    </linearGradient>
+    <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#bce3ea" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#80c6d5" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#55a5b7" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="concreteGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="320" height="200" fill="url(#skyGrad)"/>
+  
+  <!-- Main Building Structure -->
+  <rect x="40" y="45" width="240" height="130" rx="3" fill="url(#concreteGrad)"/>
+  <rect x="55" y="55" width="210" height="85" rx="2" fill="url(#glassGrad)"/>
+  
+  <!-- Window Panes Grid -->
+  <g stroke="#ffffff" stroke-width="1.5" opacity="0.65">
+    <line x1="55" y1="80" x2="265" y2="80"/>
+    <line x1="55" y1="105" x2="265" y2="105"/>
+    <line x1="90" y1="55" x2="90" y2="140"/>
+    <line x1="125" y1="55" x2="125" y2="140"/>
+    <line x1="160" y1="55" x2="160" y2="140"/>
+    <line x1="195" y1="55" x2="195" y2="140"/>
+    <line x1="230" y1="55" x2="230" y2="140"/>
+  </g>
+  
+  <!-- Hospital Sign Box -->
+  <rect x="110" y="25" width="100" height="28" rx="4" fill="#00838f" stroke="#004d40" stroke-width="1.5"/>
+  <rect x="120" y="32" width="14" height="14" rx="2" fill="#ffffff"/>
+  <path d="M127 34v10M122 39h10" stroke="#00838f" stroke-width="2.5" stroke-linecap="round"/>
+  <text x="140" y="42" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="bold" letter-spacing="0.5">UniHealth</text>
+
+  <!-- Ground Entrance -->
+  <rect x="0" y="170" width="320" height="30" fill="#94a3b8"/>
+  <rect x="20" y="165" width="280" height="8" fill="#64748b"/>
+  <rect x="125" y="140" width="70" height="28" fill="#334155"/>
+  <rect x="130" y="142" width="28" height="26" fill="#e2e8f0" opacity="0.8"/>
+  <rect x="162" y="142" width="28" height="26" fill="#e2e8f0" opacity="0.8"/>
+
+  <!-- Landscaping Trees -->
+  <circle cx="25" cy="155" r="18" fill="#15803d"/>
+  <circle cx="15" cy="160" r="14" fill="#166534"/>
+  <rect x="22" y="165" width="6" height="15" fill="#78350f"/>
+
+  <circle cx="295" cy="155" r="18" fill="#15803d"/>
+  <circle cx="305" cy="160" r="14" fill="#166534"/>
+  <rect x="292" y="165" width="6" height="15" fill="#78350f"/>
+</svg>
