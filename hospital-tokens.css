@@ -1,0 +1,223 @@
+/* ==========================================================================
+   UniHealth Design System · Clinical SaaS Pro Max
+   Palette: Clinical Teal (#0891B2), Dark Teal Sidebar (#12343B -> #005A63),
+            Mint (#22D3EE), Slate (#0F172A), Emerald (#059669)
+   Typography: Figtree (Headings & Metrics) + Noto Sans (Body & Clinical Data)
+   Accessibility: WCAG 2.2 AA Compliant, High Contrast Ratios, Reduced Motion
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap');
+
+@layer base, components, responsive;
+
+@layer base {
+  :root {
+    color-scheme: light;
+    
+    /* Typography Tokens */
+    --font-heading: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-body: 'Noto Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    
+    /* 1. Base Healthcare Brand Palette (Remains stable regardless of mode) */
+    --primary: #0891B2;
+    --primary-dark: #0E7490;
+    --primary-light: #22D3EE;
+    --tint: #ECFEFF;
+    --tint-strong: #CFFAFE;
+    --text: #0F172A;
+    --text-secondary: #334155;
+    --text-on-primary: #FFFFFF;
+    --muted: #64748B;
+    --muted-light: #94A3B8;
+    
+    /* Dark Teal Navigation Sidebar Tokens (Reference target: #12343B -> #005A63) */
+    --sidebar-bg: linear-gradient(180deg, #12343B 0%, #0C262C 65%, #06191D 100%);
+    --sidebar-text: #E6F4F6;
+    --sidebar-muted: #8CA5AB;
+    --sidebar-active-bg: rgba(0, 168, 168, 0.24);
+    --sidebar-active-border: #22D3EE;
+    --sidebar-hover: rgba(255, 255, 255, 0.08);
+    --sidebar-border: rgba(255, 255, 255, 0.08);
+
+    /* Neutral Surfaces */
+    --surface: #FFFFFF;
+    --surface-raised: #FFFFFF;
+    --surface-hover: #F8FAFC;
+    --bg: #F8FAFC;
+    --soft: #F1F5F9;
+    --soft-hover: #E2E8F0;
+    --border: #E2E8F0;
+    --border-strong: #CBD5E1;
+    --focus-ring: rgba(8, 145, 178, 0.35);
+
+    /* Semantic Feedback Colors */
+    --success: #059669;
+    --success-tint: #ECFDF5;
+    --success-border: #A7F3D0;
+    --warning: #D97706;
+    --warning-tint: #FFFBEB;
+    --warning-border: #FDE68A;
+    --danger: #DC2626;
+    --danger-tint: #FEF2F2;
+    --danger-border: #FECACA;
+    --info: #0891B2;
+    --info-tint: #ECFEFF;
+    --info-border: #A5F3FC;
+
+    /* 2. Operational Status Tokens (Separated from primary brand!) */
+    --status-accent: #059669;
+    --status-tint: #ECFDF5;
+    --status-border: #A7F3D0;
+    --status-beacon-color: #059669;
+    --chart-grid: #E2E8F0;
+
+    /* Metrics & Spacing Scale (4, 8, 12, 16, 20, 24, 32, 40, 48px) */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-8: 32px;
+    --space-10: 40px;
+    --space-12: 48px;
+
+    --sidebar-width: 260px;
+    --topbar-height: 72px;
+
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-pill: 9999px;
+
+    --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+    --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.06);
+    --shadow-md: 0 4px 6px -1px rgb(15 23 42 / 0.06), 0 2px 4px -2px rgb(15 23 42 / 0.04);
+    --shadow-lg: 0 10px 25px -4px rgb(15 23 42 / 0.08), 0 4px 8px -4px rgb(15 23 42 / 0.04);
+    --shadow-modal: 0 20px 45px -8px rgb(15 23 42 / 0.20);
+
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    background-color: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Status Theming: Normal (Calm Clinical) */
+  :root[data-hospital-status="normal"], body[data-hospital-status="normal"] {
+    --status-accent: #059669;
+    --status-tint: #ECFDF5;
+    --status-border: #A7F3D0;
+    --status-beacon-color: #059669;
+  }
+
+  /* Status Theming: Busy / Surge */
+  :root[data-hospital-status="busy"], body[data-hospital-status="busy"] {
+    --status-accent: #D97706;
+    --status-tint: #FFFBEB;
+    --status-border: #FDE68A;
+    --status-beacon-color: #D97706;
+  }
+
+  /* Status Theming: Emergency (Preserves brand --primary for controls!) */
+  :root[data-hospital-status="emergency"], body[data-hospital-status="emergency"] {
+    --status-accent: #DC2626;
+    --status-tint: #FEF2F2;
+    --status-border: #FECACA;
+    --status-beacon-color: #DC2626;
+  }
+
+  /* Dark Theme */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #090D16;
+    --surface: #111827;
+    --surface-raised: #1F2937;
+    --surface-hover: #1E293B;
+    --soft: #1E293B;
+    --soft-hover: #334155;
+    --border: #1F2937;
+    --border-strong: #374151;
+    --text: #F1F5F9;
+    --text-secondary: #CBD5E1;
+    --muted: #94A3B8;
+    --muted-light: #64748B;
+    
+    --tint: #0B2936;
+    --tint-strong: #155E75;
+
+    --sidebar-bg: linear-gradient(180deg, #0A1C20 0%, #061215 100%);
+    --sidebar-text: #E6F4F6;
+    --sidebar-muted: #7E979D;
+    --sidebar-active-bg: rgba(0, 168, 168, 0.28);
+    --sidebar-border: rgba(255, 255, 255, 0.05);
+
+    --success-tint: #064E3B;
+    --success-border: #047857;
+    --warning-tint: #78350F;
+    --warning-border: #B45309;
+    --danger-tint: #7F1D1D;
+    --danger-border: #991B1B;
+    --info-tint: #083344;
+    --info-border: #0E7490;
+    --chart-grid: #1F2937;
+    
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 10px 25px -3px rgb(0 0 0 / 0.5);
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  /* Tabular Numerals on all metrics & tables */
+  .stat-value, .metric-value, .tabular, td, .badge-count, .table-num, .time-val {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Accessibility Skip Link */
+  .skip {
+    position: absolute;
+    top: -50px;
+    left: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    background: var(--primary-dark);
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    z-index: 1000;
+    text-decoration: none;
+    transition: top 0.2s ease;
+  }
+  .skip:focus {
+    top: var(--space-4);
+    outline: 3px solid var(--focus-ring);
+  }
+
+  /* Consistent SVG Icons */
+  .icon {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+    stroke: currentColor;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    flex-shrink: 0;
+  }
+}
