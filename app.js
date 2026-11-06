@@ -1,85 +1,144 @@
 const $ = (selector, parent = document) => parent.querySelector(selector);
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
 const paths = {
   grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
-  doctors: '<path d="M8 3v5a4 4 0 0 0 8 0V3M6 3h4m4 0h4M12 12v3a5 5 0 0 0 10 0v-3"/><circle cx="21" cy="9" r="2"/>',
-  beds: '<path d="M3 18V7m0 8h18v6M3 18h18M7 15V9h11a3 3 0 0 1 3 3v3M3 21v-3"/><path d="M3 9h4v6"/>',
-  queue: '<path d="M8 6h13M8 12h13M8 18h13"/><circle cx="3" cy="6" r="1"/><circle cx="3" cy="12" r="1"/><circle cx="3" cy="18" r="1"/>',
-  chart: '<path d="M4 3v17h17M9 16V9m5 7V5m5 11v-5"/>',
-  audit: '<path d="M8 4H5v17h14V4h-3M9 11h6m-6 5h6"/><rect x="8" y="2" width="8" height="5" rx="2"/>',
+  doctors: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  beds: '<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>',
+  queue: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  chart: '<path d="M18 20V10M12 20V4M6 20v-6"/>',
+  audit: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
+  notes: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  settings: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>',
   arrow: '<path d="M5 12h14m-5-5 5 5-5 5"/>',
+  arrowRight: '<path d="M9 18l6-6-6-6"/>',
   plus: '<path d="M12 5v14M5 12h14"/>',
-  refresh: '<path d="M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 13 3M18 18a8 8 0 0 1-13-3"/>',
-  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1"/>',
-  logout: '<path d="M9 4H4v16h5m5-13 5 5-5 5m-6-5h13"/>',
-  search: '<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>',
-  shield: '<path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/>',
-  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-  close: '<path d="m6 6 12 12M6 18 18 6"/>',
-  menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
-  eye: '<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
-  check: '<path d="M20 6 9 17l-5-5"/>',
-  hospital: '<path d="M3 21h18M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16M9 9h6M12 6v6"/>',
-  activity: '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>',
-  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
-  sparkles: '<path d="m12 3 1.91 5.89a2.12 2.12 0 0 0 1.2 1.2L21 12l-5.89 1.91a2.12 2.12 0 0 0-1.2 1.2L12 21l-1.91-5.89a2.12 2.12 0 0 0-1.2-1.2L3 12l5.89-1.91a2.12 2.12 0 0 0 1.2-1.2Z"/>',
+  refresh: '<path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>',
+  sun: '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  bell: '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>',
+  search: '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  close: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  menu: '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
+  heart: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+  pulse: '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+  emergency: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  moreDots: '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+  cal: '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+  scissors: '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/>',
+  discharge: '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>',
+  admit: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>'
 };
-const icon = name => `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.grid}</svg>`;
-const brand = `<span class="brand-mark" aria-hidden="true">${icon('plus')}</span><span>UniHealth<span class="brand-sub">HOSPITAL WORKSPACE</span></span>`;
-const page = document.body.dataset.page;
-const labels = { dashboard: 'Overview', doctors: 'Doctors', beds: 'Beds & wards', tokens: 'Patient queue', analytics: 'Analytics', audit: 'Audit log' };
-const hints = { dashboard: 'A clear view of your hospital, all in one place.', doctors: 'Manage your care team and keep duty status up to date.', beds: 'Keep an accurate picture of capacity across your hospital.', tokens: 'Coordinate arrivals, consultations, and the next step in care.', analytics: 'Understand activity using records from your hospital.', audit: 'A traceable history of changes across your workspace.' };
-const pageIcons = { dashboard: 'grid', doctors: 'doctors', beds: 'beds', tokens: 'queue', analytics: 'chart', audit: 'audit' };
-const state = { hospital: null, doctors: [], wards: [], tokens: [], summary: null, analytics: null, audit: null, auditPage: 1, auditQuery: '' };
-let theme = localStorage.getItem('uh-hospital-theme') || 'light';
-// Retire the previous browser-only identity and fabricated audit history.
-for (const key of ['hospitalId', 'uhAuditEntries']) localStorage.removeItem(key);
-document.documentElement.dataset.theme = theme;
-function toggleTheme() { theme = theme === 'light' ? 'dark' : 'light'; document.documentElement.dataset.theme = theme; localStorage.setItem('uh-hospital-theme', theme); }
-function parseDate(value) { return new Date(String(value).replace(' ', 'T') + (String(value).includes('Z') ? '' : 'Z')); }
-function date(value, full = true) { return value ? new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', ...(full ? { day: 'numeric', month: 'short' } : {}), hour: '2-digit', minute: '2-digit' }).format(parseDate(value)) : '—'; }
-const label = value => String(value).replaceAll('_', ' ').replace(/^\w/, c => c.toUpperCase());
-const badge = (value, content = label(value)) => `<span class="badge ${escape(value)}"><span class="dot"></span>${escape(content)}</span>`;
-const empty = (title, description, action = '') => `<div class="empty">${icon(pageIcons[page] || 'grid')}<h3>${title}</h3><p>${description}</p>${action}</div>`;
-const button = (text, action, className = 'primary', data = '') => `<button type="button" class="${className}" data-action="${action}" ${data}>${action.startsWith('add') ? icon('plus') : ''}${text}</button>`;
 
+const icon = name => `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.grid}</svg>`;
+const page = document.body.dataset.page || 'dashboard';
+
+const labels = {
+  dashboard: 'Overview',
+  doctors: 'Doctors',
+  beds: 'Beds & Wards',
+  tokens: 'Patient Queue',
+  analytics: 'Analytics',
+  audit: 'Audit Logs',
+  'care-notes': 'Care Notes',
+  settings: 'Settings'
+};
+
+const pageIcons = {
+  dashboard: 'grid',
+  doctors: 'doctors',
+  beds: 'beds',
+  tokens: 'queue',
+  analytics: 'chart',
+  audit: 'audit',
+  'care-notes': 'notes',
+  settings: 'settings'
+};
+
+// 15 realistic tokens strictly conforming to tokens database schema
 const DEFAULT_DEMO_DB = {
   hospital: {
-    id: 'UH-88219',
-    name: 'UniHealth Central Hospital',
-    email: 'demo@unihealth.org',
+    id: 'UH-EGH-9921',
+    name: 'Easwari General Hospital',
+    email: 'admin@easwarihospital.org',
     phone: '+91 78451 22655',
-    address: 'Padma Residency, Renga Nagar, Elambalur Road',
-    status: 'normal'
+    address: 'Padma Residency, Renga Nagar, Elambalur Road, Chennai',
+    status: 'normal',
+    admin_name: 'Dr. Mohith Dharshan',
+    admin_role: 'Hospital Administrator'
   },
   wards: [
-    { id: 'w1', hospital_id: 'UH-88219', name: 'Critical Care ICU', type: 'icu', capacity: 15, occupied: 12, version: 1 },
-    { id: 'w2', hospital_id: 'UH-88219', name: 'Emergency Trauma Ward', type: 'emergency', capacity: 20, occupied: 18, version: 1 },
-    { id: 'w3', hospital_id: 'UH-88219', name: 'General Medicine Ward A', type: 'general', capacity: 45, occupied: 32, version: 1 },
-    { id: 'w4', hospital_id: 'UH-88219', name: 'Pediatric Care Ward', type: 'general', capacity: 20, occupied: 12, version: 1 }
+    { id: 'w1', hospital_id: 'UH-EGH-9921', name: 'General Ward', type: 'general', capacity: 200, occupied: 156, version: 1 },
+    { id: 'w2', hospital_id: 'UH-EGH-9921', name: 'Critical Care ICU', type: 'icu', capacity: 48, occupied: 32, version: 1 },
+    { id: 'w3', hospital_id: 'UH-EGH-9921', name: 'Emergency Trauma Ward', type: 'emergency', capacity: 50, occupied: 26, version: 1 },
+    { id: 'w4', hospital_id: 'UH-EGH-9921', name: 'Pediatric Care Ward', type: 'general', capacity: 50, occupied: 30, version: 1 }
   ],
   doctors: [
-    { id: 'd1', hospital_id: 'UH-88219', name: 'Dr. Sarah Mitchell, MD', specialty: 'Cardiology', license: 'MCI-88421', phone: '+91 98451 22001', email: 's.mitchell@unihealth.org', department: 'Cardiology & Critical Care', room: 'OPD-301', shift_start: '08:00', shift_end: '16:00', on_duty: true, version: 1 },
-    { id: 'd2', hospital_id: 'UH-88219', name: 'Dr. Arjun Mehta, MBBS, MS', specialty: 'General Surgery & Trauma', license: 'MCI-77319', phone: '+91 98451 22002', email: 'a.mehta@unihealth.org', department: 'Surgery', room: 'OT-2', shift_start: '09:00', shift_end: '17:00', on_duty: true, version: 1 },
-    { id: 'd3', hospital_id: 'UH-88219', name: 'Dr. Elena Rostova, MD', specialty: 'Emergency Medicine', license: 'MCI-66104', phone: '+91 98451 22003', email: 'e.rostova@unihealth.org', department: 'Emergency Trauma', room: 'ER-102', shift_start: '00:00', shift_end: '08:00', on_duty: true, version: 1 },
-    { id: 'd4', hospital_id: 'UH-88219', name: 'Dr. Priya Raman, MD', specialty: 'Pediatrics', license: 'MCI-99520', phone: '+91 98451 22004', email: 'p.raman@unihealth.org', department: 'Pediatrics', room: 'OPD-108', shift_start: '10:00', shift_end: '18:00', on_duty: true, version: 1 },
-    { id: 'd5', hospital_id: 'UH-88219', name: 'Dr. David Chen, MD, DM', specialty: 'Neurology', license: 'MCI-44812', phone: '+91 98451 22005', email: 'd.chen@unihealth.org', department: 'Neurosciences', room: 'OPD-405', shift_start: '08:00', shift_end: '16:00', on_duty: false, version: 1 }
+    { id: 'd1', hospital_id: 'UH-EGH-9921', name: 'Dr. Sarah Mitchell, MD', specialty: 'Cardiology', license: 'MCI-88421', phone: '+91 98451 22001', email: 's.mitchell@easwarihospital.org', department: 'Cardiology', room: 'OPD-301', shift_start: '08:00', shift_end: '16:00', on_duty: true, version: 1 },
+    { id: 'd2', hospital_id: 'UH-EGH-9921', name: 'Dr. Arjun Mehta, MBBS, MS', specialty: 'Trauma Surgery', license: 'MCI-77319', phone: '+91 98451 22002', email: 'a.mehta@easwarihospital.org', department: 'Trauma Surgery', room: 'OT-2', shift_start: '09:00', shift_end: '17:00', on_duty: true, version: 1 },
+    { id: 'd3', hospital_id: 'UH-EGH-9921', name: 'Dr. Elena Rostova, MD', specialty: 'Emergency Medicine', license: 'MCI-66104', phone: '+91 98451 22003', email: 'e.rostova@easwarihospital.org', department: 'Emergency Medicine', room: 'ER-102', shift_start: '00:00', shift_end: '08:00', on_duty: true, version: 1 },
+    { id: 'd4', hospital_id: 'UH-EGH-9921', name: 'Dr. Priya Raman, MD', specialty: 'Pediatrics', license: 'MCI-99520', phone: '+91 98451 22004', email: 'p.raman@easwarihospital.org', department: 'Pediatrics', room: 'OPD-108', shift_start: '10:00', shift_end: '18:00', on_duty: true, version: 1 },
+    { id: 'd5', hospital_id: 'UH-EGH-9921', name: 'Dr. David Chen, MD, DM', specialty: 'Neurosciences', license: 'MCI-44812', phone: '+91 98451 22005', email: 'd.chen@easwarihospital.org', department: 'Neurosciences', room: 'OPD-405', shift_start: '08:00', shift_end: '16:00', on_duty: false, version: 1 }
   ],
   tokens: [
-    { id: 't1', hospital_id: 'UH-88219', number: 101, patient: 'Rohan Sharma (42M)', reason: 'Acute chest discomfort and shortness of breath', priority: 'emergency', status: 'in_progress', doctor_id: 'd1', doctor_name: 'Dr. Sarah Mitchell, MD', visit_date: '2026-11-02', created_at: new Date(Date.now() - 25*60000).toISOString(), started_at: new Date(Date.now() - 10*60000).toISOString(), completed_at: null, version: 1 },
-    { id: 't2', hospital_id: 'UH-88219', number: 102, patient: 'Ananya Deshmukh (29F)', reason: 'Severe migraine with photophobia', priority: 'urgent', status: 'waiting', doctor_id: 'd5', doctor_name: 'Dr. David Chen, MD, DM', visit_date: '2026-11-02', created_at: new Date(Date.now() - 18*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
-    { id: 't3', hospital_id: 'UH-88219', number: 103, patient: 'Vikram Patel (61M)', reason: 'Post-operative wound dressing review', priority: 'routine', status: 'waiting', doctor_id: 'd2', doctor_name: 'Dr. Arjun Mehta, MBBS, MS', visit_date: '2026-11-02', created_at: new Date(Date.now() - 12*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
-    { id: 't4', hospital_id: 'UH-88219', number: 104, patient: 'Baby Aarav (3M)', reason: 'High grade fever with persistent cough', priority: 'emergency', status: 'waiting', doctor_id: 'd4', doctor_name: 'Dr. Priya Raman, MD', visit_date: '2026-11-02', created_at: new Date(Date.now() - 5*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
-    { id: 't5', hospital_id: 'UH-88219', number: 100, patient: 'Meera Iyer (35F)', reason: 'Routine antenatal consultation', priority: 'routine', status: 'completed', doctor_id: 'd4', doctor_name: 'Dr. Priya Raman, MD', visit_date: '2026-11-02', created_at: new Date(Date.now() - 75*60000).toISOString(), started_at: new Date(Date.now() - 50*60000).toISOString(), completed_at: new Date(Date.now() - 15*60000).toISOString(), version: 2 }
+    { id: 't102', hospital_id: 'UH-EGH-9921', number: 102, patient: 'Arun Kumar S. (42M)', reason: 'Acute chest discomfort & palpitations', priority: 'emergency', status: 'in_progress', doctor_id: 'd1', doctor_name: 'Dr. Sarah Mitchell, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 30*60000).toISOString(), started_at: new Date(Date.now() - 15*60000).toISOString(), completed_at: null, version: 1 },
+    { id: 't103', hospital_id: 'UH-EGH-9921', number: 103, patient: 'Priya R. (28F)', reason: 'High fever, persistent headache & nausea', priority: 'urgent', status: 'waiting', doctor_id: 'd3', doctor_name: 'Dr. Elena Rostova, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 25*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't104', hospital_id: 'UH-EGH-9921', number: 104, patient: 'Vignesh M. (36M)', reason: 'Closed fracture of right radius/ulna', priority: 'routine', status: 'waiting', doctor_id: 'd2', doctor_name: 'Dr. Arjun Mehta, MBBS, MS', visit_date: '2026-11-06', created_at: new Date(Date.now() - 22*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't105', hospital_id: 'UH-EGH-9921', number: 105, patient: 'Lakshmi D. (51F)', reason: 'Hypertensive urgency (175/105 mmHg)', priority: 'urgent', status: 'waiting', doctor_id: 'd1', doctor_name: 'Dr. Sarah Mitchell, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 18*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't106', hospital_id: 'UH-EGH-9921', number: 106, patient: 'Hari Prasad K. (19M)', reason: 'Acute allergic urticaria & facial rash', priority: 'routine', status: 'waiting', doctor_id: 'd5', doctor_name: 'Dr. David Chen, MD, DM', visit_date: '2026-11-06', created_at: new Date(Date.now() - 16*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't107', hospital_id: 'UH-EGH-9921', number: 107, patient: 'Deepa N. (34F)', reason: 'Blunt abdominal trauma post-motorcycle accident', priority: 'emergency', status: 'waiting', doctor_id: 'd3', doctor_name: 'Dr. Elena Rostova, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 14*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't108', hospital_id: 'UH-EGH-9921', number: 108, patient: 'Rajesh Verma (58M)', reason: 'Sudden onset focal numbness & mild dysarthria', priority: 'urgent', status: 'waiting', doctor_id: 'd5', doctor_name: 'Dr. David Chen, MD, DM', visit_date: '2026-11-06', created_at: new Date(Date.now() - 12*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't109', hospital_id: 'UH-EGH-9921', number: 109, patient: 'Ananya Deshmukh (29F)', reason: 'Severe vertigo and otalgia', priority: 'routine', status: 'waiting', doctor_id: 'd3', doctor_name: 'Dr. Elena Rostova, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 10*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't110', hospital_id: 'UH-EGH-9921', number: 110, patient: 'Suresh Babu (63M)', reason: 'Acute pulmonary congestion & bilateral crackles', priority: 'emergency', status: 'in_progress', doctor_id: 'd1', doctor_name: 'Dr. Sarah Mitchell, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 35*60000).toISOString(), started_at: new Date(Date.now() - 20*60000).toISOString(), completed_at: null, version: 1 },
+    { id: 't111', hospital_id: 'UH-EGH-9921', number: 111, patient: 'Meenakshi Sundaram (47F)', reason: 'Right iliac fossa tenderness & fever', priority: 'urgent', status: 'waiting', doctor_id: 'd2', doctor_name: 'Dr. Arjun Mehta, MBBS, MS', visit_date: '2026-11-06', created_at: new Date(Date.now() - 8*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't112', hospital_id: 'UH-EGH-9921', number: 112, patient: 'Baby Aarav (3M)', reason: 'High fever, tachypnea & intercostal retractions', priority: 'emergency', status: 'waiting', doctor_id: 'd4', doctor_name: 'Dr. Priya Raman, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 6*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't113', hospital_id: 'UH-EGH-9921', number: 113, patient: 'Vikram Patel (61M)', reason: 'Post-laparoscopic surgery review & dressing', priority: 'routine', status: 'waiting', doctor_id: 'd2', doctor_name: 'Dr. Arjun Mehta, MBBS, MS', visit_date: '2026-11-06', created_at: new Date(Date.now() - 5*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't114', hospital_id: 'UH-EGH-9921', number: 114, patient: 'Kavitha R. (38F)', reason: 'Routine antenatal evaluation (32 weeks gestation)', priority: 'routine', status: 'waiting', doctor_id: 'd4', doctor_name: 'Dr. Priya Raman, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 3*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't115', hospital_id: 'UH-EGH-9921', number: 115, patient: 'Mohammed Farhan (45M)', reason: 'Chronic pleuritic chest pain & fatigue', priority: 'urgent', status: 'waiting', doctor_id: 'd3', doctor_name: 'Dr. Elena Rostova, MD', visit_date: '2026-11-06', created_at: new Date(Date.now() - 2*60000).toISOString(), started_at: null, completed_at: null, version: 1 },
+    { id: 't116', hospital_id: 'UH-EGH-9921', number: 116, patient: 'Sandhya Nair (52F)', reason: 'Acute painful red eye with reduced visual acuity', priority: 'routine', status: 'waiting', doctor_id: 'd5', doctor_name: 'Dr. David Chen, MD, DM', visit_date: '2026-11-06', created_at: new Date().toISOString(), started_at: null, completed_at: null, version: 1 }
   ],
   audit: [
-    { id: 5, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'tokens.status_changed', details: 'Token #100: in_progress → completed', created_at: new Date(Date.now() - 15*60000).toISOString() },
-    { id: 4, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'tokens.created', details: 'Emergency Token #104 issued for Baby Aarav (3M)', created_at: new Date(Date.now() - 5*60000).toISOString() },
-    { id: 3, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'doctors.on_duty_toggled', details: 'Dr. Sarah Mitchell set to on duty', created_at: new Date(Date.now() - 60*60000).toISOString() },
-    { id: 2, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'wards.occupancy_updated', details: 'ICU occupancy adjusted to 12/15 beds', created_at: new Date(Date.now() - 120*60000).toISOString() },
-    { id: 1, hospital_id: 'UH-88219', actor: 'demo@unihealth.org', action: 'account.login', details: 'Administrator workspace session established', created_at: new Date(Date.now() - 180*60000).toISOString() }
+    { id: 4, hospital_id: 'UH-EGH-9921', actor: 'Dr. Sarah Mitchell, MD', action: 'tokens.status_changed', details: 'Token #102: Consultation started in OPD-301', created_at: new Date(Date.now() - 15*60000).toISOString() },
+    { id: 3, hospital_id: 'UH-EGH-9921', actor: 'Dr. Mohith Dharshan', action: 'wards.updated', details: 'Bed #ICU-12 assigned to Patient P-4487', created_at: new Date(Date.now() - 25*60000).toISOString() },
+    { id: 2, hospital_id: 'UH-EGH-9921', actor: 'Triage Desk', action: 'tokens.created', details: 'Emergency Token #107 issued for Deepa N. (34F)', created_at: new Date(Date.now() - 40*60000).toISOString() },
+    { id: 1, hospital_id: 'UH-EGH-9921', actor: 'Dr. Mohith Dharshan', action: 'account.login', details: 'Administrator workspace session established', created_at: new Date(Date.now() - 120*60000).toISOString() }
   ]
 };
+
+const state = {
+  hospital: null,
+  summary: null,
+  wards: [],
+  doctors: [],
+  tokens: [],
+  audit: [],
+  filterPriority: 'all',
+  filterStatus: 'all',
+  searchQuery: ''
+};
+
+let theme = localStorage.getItem('uh-hospital-theme') || 'light';
+document.documentElement.dataset.theme = theme;
+function toggleTheme() {
+  theme = theme === 'light' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem('uh-hospital-theme', theme);
+}
+
+function parseDate(v) { return new Date(String(v).replace(' ', 'T') + (String(v).includes('Z') ? '' : 'Z')); }
+function date(v, full = true) {
+  return v ? new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', ...(full ? { day: 'numeric', month: 'short' } : {}), hour: '2-digit', minute: '2-digit' }).format(parseDate(v)) : '—';
+}
+function timeAgo(dateString) {
+  const sec = Math.floor((Date.now() - new Date(dateString).getTime()) / 1000);
+  if (sec < 60) return 'Just now';
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min} min ago`;
+  const hr = Math.floor(min / 60);
+  return `${hr} hr ago`;
+}
 
 function getDemoDb() {
   try {
@@ -89,10 +148,46 @@ function getDemoDb() {
   localStorage.setItem('uh_demo_db', JSON.stringify(DEFAULT_DEMO_DB));
   return JSON.parse(JSON.stringify(DEFAULT_DEMO_DB));
 }
-
 function saveDemoDb(db) {
+  try { localStorage.setItem('uh_demo_db', JSON.stringify(db)); } catch (e) {}
+}
+
+// Synchronized cross-origin transport
+const statusChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('unihealth_status') : null;
+if (statusChannel) {
+  statusChannel.onmessage = e => {
+    if (e.data && e.data.status) applyHospitalStatusLocally(e.data.status);
+  };
+}
+
+function applyHospitalStatusLocally(status) {
+  if (state.hospital) state.hospital.status = status;
+  document.documentElement.dataset.hospitalStatus = status;
+  document.body.dataset.hospitalStatus = status;
+  try { localStorage.setItem('uh_hospital_status', status); } catch (e) {}
+
+  const badge = $('#ref-current-status-badge');
+  if (badge) {
+    const label = status === 'emergency' ? 'Emergency' : status === 'busy' ? 'Surge' : 'Normal';
+    badge.textContent = `${label} ⌵`;
+  }
+  document.querySelectorAll('.ref-mode-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === status);
+  });
+}
+
+async function setHospitalStatus(status) {
+  applyHospitalStatusLocally(status);
+  if (statusChannel) statusChannel.postMessage({ status });
   try {
-    localStorage.setItem('uh_demo_db', JSON.stringify(db));
+    await fetch('http://localhost:5002/api/hospital/status', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    }).catch(() => {});
+  } catch (e) {}
+  try {
+    await api('/hospital/status', { method: 'PATCH', body: { status } });
   } catch (e) {}
 }
 
@@ -101,40 +196,7 @@ async function mockApi(path, options = {}) {
   const db = getDemoDb();
   const body = options.body || {};
 
-  if (path.startsWith('/auth/register') || path.startsWith('/auth/login')) {
-    if (path.startsWith('/auth/register') && body.name) {
-      db.hospital.name = body.name || db.hospital.name;
-      db.hospital.email = body.email || db.hospital.email;
-      db.hospital.phone = body.phone || db.hospital.phone;
-      db.hospital.address = body.address || db.hospital.address;
-      db.audit.unshift({
-        id: Date.now(),
-        hospital_id: db.hospital.id,
-        actor: db.hospital.email,
-        action: 'hospital.registered',
-        details: 'Hospital workspace registered',
-        created_at: new Date().toISOString()
-      });
-      saveDemoDb(db);
-    }
-    localStorage.setItem('uh_demo_active', 'true');
-    return { ok: true, hospital: db.hospital };
-  }
-  if (path.startsWith('/auth/logout')) {
-    localStorage.removeItem('uh_demo_active');
-    return { ok: true };
-  }
-  if (path.startsWith('/auth/recover')) {
-    return { ok: true, message: 'Simulation: please sign in using the demo account credentials.' };
-  }
-  if (path.startsWith('/auth/reset')) {
-    return { ok: true, message: 'Simulation: password reset successfully.' };
-  }
-
-  if (path === '/me') {
-    return { hospital: db.hospital };
-  }
-
+  if (path === '/me') return { hospital: db.hospital };
   if (path === '/summary') {
     const capacity = db.wards.reduce((s, w) => s + Number(w.capacity || 0), 0);
     const occupied = db.wards.reduce((s, w) => s + Number(w.occupied || 0), 0);
@@ -149,74 +211,13 @@ async function mockApi(path, options = {}) {
     return {
       beds: { capacity, occupied, icu_capacity, icu_occupied },
       doctors: { total: totalDocs, on_duty: onDutyDocs },
-      queue: { waiting, in_progress, completed_today, emergencies, average_wait: 14.5 },
+      queue: { waiting, in_progress, completed_today, emergencies, average_wait: 12 },
       recent: db.audit.slice(0, 5),
       status: db.hospital.status || 'normal'
     };
   }
-
-  if (path === '/wards') {
-    if (method === 'GET') return { items: db.wards };
-    if (method === 'POST') {
-      const newWard = { id: 'w' + Date.now(), hospital_id: db.hospital.id, ...body, version: 1 };
-      db.wards.push(newWard);
-      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'wards.created', details: `Ward ${newWard.name} created`, created_at: new Date().toISOString() });
-      saveDemoDb(db);
-      return { ok: true, id: newWard.id };
-    }
-  }
-  if (path.startsWith('/wards/')) {
-    const id = path.split('/')[2];
-    if (method === 'PUT') {
-      const idx = db.wards.findIndex(w => w.id === id);
-      if (idx !== -1) {
-        db.wards[idx] = { ...db.wards[idx], ...body, version: (db.wards[idx].version || 1) + 1 };
-        db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'wards.updated', details: `Ward ${db.wards[idx].name} updated`, created_at: new Date().toISOString() });
-        saveDemoDb(db);
-      }
-      return { ok: true };
-    }
-    if (method === 'DELETE') {
-      db.wards = db.wards.filter(w => w.id !== id);
-      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'wards.deleted', details: `Ward ${id} deleted`, created_at: new Date().toISOString() });
-      saveDemoDb(db);
-      return { ok: true };
-    }
-  }
-
-  if (path === '/doctors') {
-    if (method === 'GET') return { items: db.doctors };
-    if (method === 'POST') {
-      const newDoc = { id: 'd' + Date.now(), hospital_id: db.hospital.id, ...body, version: 1 };
-      db.doctors.push(newDoc);
-      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'doctors.created', details: `Dr. ${newDoc.name} registered`, created_at: new Date().toISOString() });
-      saveDemoDb(db);
-      return { ok: true, id: newDoc.id };
-    }
-  }
-  if (path.startsWith('/doctors/')) {
-    const id = path.split('/')[2];
-    if (method === 'PUT') {
-      const idx = db.doctors.findIndex(d => d.id === id);
-      if (idx !== -1) {
-        db.doctors[idx] = { ...db.doctors[idx], ...body, version: (db.doctors[idx].version || 1) + 1 };
-        db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'doctors.updated', details: `Doctor ${db.doctors[idx].name} updated`, created_at: new Date().toISOString() });
-        saveDemoDb(db);
-      }
-      return { ok: true };
-    }
-    if (method === 'DELETE') {
-      db.doctors = db.doctors.filter(d => d.id !== id);
-      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'doctors.deleted', details: `Doctor removed`, created_at: new Date().toISOString() });
-      saveDemoDb(db);
-      return { ok: true };
-    }
-  }
-
   if (path === '/tokens') {
-    if (method === 'GET') {
-      return { items: db.tokens };
-    }
+    if (method === 'GET') return { items: db.tokens };
     if (method === 'POST') {
       const maxNum = db.tokens.reduce((m, t) => Math.max(m, t.number || 100), 100);
       const doc = db.doctors.find(d => d.id === body.doctor_id);
@@ -237,7 +238,14 @@ async function mockApi(path, options = {}) {
         version: 1
       };
       db.tokens.unshift(newToken);
-      db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'tokens.created', details: `Token #${newToken.number} issued for ${newToken.patient}`, created_at: new Date().toISOString() });
+      db.audit.unshift({
+        id: Date.now(),
+        hospital_id: db.hospital.id,
+        actor: 'Dr. Mohith Dharshan',
+        action: 'tokens.created',
+        details: `Token #${newToken.number} issued for ${newToken.patient}`,
+        created_at: new Date().toISOString()
+      });
       saveDemoDb(db);
       return { ok: true, id: newToken.id };
     }
@@ -252,58 +260,44 @@ async function mockApi(path, options = {}) {
         if (body.status === 'in_progress' && !db.tokens[idx].started_at) db.tokens[idx].started_at = new Date().toISOString();
         if (body.status === 'completed' || body.status === 'cancelled') db.tokens[idx].completed_at = new Date().toISOString();
         db.tokens[idx].version = (db.tokens[idx].version || 1) + 1;
-        db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'tokens.status_changed', details: `Token #${db.tokens[idx].number}: ${oldStatus} → ${body.status}`, created_at: new Date().toISOString() });
+        db.audit.unshift({
+          id: Date.now(),
+          hospital_id: db.hospital.id,
+          actor: 'Dr. Mohith Dharshan',
+          action: 'tokens.status_changed',
+          details: `Token #${db.tokens[idx].number}: ${oldStatus} → ${body.status}`,
+          created_at: new Date().toISOString()
+        });
         saveDemoDb(db);
       }
       return { ok: true };
     }
   }
-
+  if (path === '/wards') return { items: db.wards };
+  if (path.startsWith('/wards/')) {
+    const id = path.split('/')[2];
+    if (method === 'PUT') {
+      const idx = db.wards.findIndex(w => w.id === id);
+      if (idx !== -1) {
+        db.wards[idx] = { ...db.wards[idx], ...body, version: (db.wards[idx].version || 1) + 1 };
+        db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: 'Dr. Mohith Dharshan', action: 'wards.updated', details: `Ward ${db.wards[idx].name} updated`, created_at: new Date().toISOString() });
+        saveDemoDb(db);
+      }
+      return { ok: true };
+    }
+  }
+  if (path === '/doctors') return { items: db.doctors };
   if (path === '/hospital/status') {
     db.hospital.status = body.status || 'normal';
-    db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: db.hospital.email, action: 'hospital.status_changed', details: `Status set to ${body.status}`, created_at: new Date().toISOString() });
+    db.audit.unshift({ id: Date.now(), hospital_id: db.hospital.id, actor: 'Dr. Mohith Dharshan', action: 'hospital.status_changed', details: `Status set to ${body.status}`, created_at: new Date().toISOString() });
     saveDemoDb(db);
     return { ok: true };
   }
-
-  if (path === '/analytics') {
-    const daily = [];
-    const now = new Date();
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(now.getTime() - i * 86400000);
-      daily.push({
-        visit_date: d.toISOString().slice(0, 10),
-        arrivals: Math.floor(25 + Math.random() * 20),
-        completed: Math.floor(22 + Math.random() * 18),
-        cancelled: Math.floor(Math.random() * 3),
-        emergencies: Math.floor(2 + Math.random() * 5),
-        average_wait: Number((10 + Math.random() * 8).toFixed(1))
-      });
-    }
-    const beds = [];
-    for (let i = 20; i >= 0; i--) {
-      const d = new Date(now.getTime() - i * 86400000);
-      beds.push({
-        capacity: 100,
-        occupied: Math.floor(65 + Math.random() * 20),
-        created_at: d.toISOString()
-      });
-    }
-    return { daily, beds };
-  }
-
-  if (path.startsWith('/audit')) {
-    return { items: db.audit, total: db.audit.length, page: 1, pageSize: 30 };
-  }
-
+  if (path.startsWith('/audit')) return { items: db.audit, total: db.audit.length, page: 1, pageSize: 30 };
   return { ok: true };
 }
 
 async function api(path, options = {}) {
-  if (localStorage.getItem('uh_demo_active') === 'true') {
-    return mockApi(path, options);
-  }
-
   let response;
   try {
     response = await fetch('/api' + path, {
@@ -312,442 +306,774 @@ async function api(path, options = {}) {
       ...(options.body ? { body: JSON.stringify(options.body) } : {})
     });
   } catch {
-    localStorage.setItem('uh_demo_active', 'true');
     return mockApi(path, options);
   }
-
   const contentType = response.headers.get('content-type') || '';
   if (!contentType.includes('application/json') || response.status === 404) {
-    localStorage.setItem('uh_demo_active', 'true');
     return mockApi(path, options);
   }
-
-  let data;
   try {
-    data = await response.json();
+    return await response.json();
   } catch {
-    localStorage.setItem('uh_demo_active', 'true');
     return mockApi(path, options);
   }
-
-  if (!response.ok) {
-    if (response.status === 401 && page !== 'auth') location.replace('/index.html');
-    const error = new Error(data.error || 'Something went wrong. Please try again.');
-    error.fields = data.fields;
-    throw error;
-  }
-  return data;
 }
 
-function notice(message, error = false) {
-  const box = $('#notice'); box.className = `notice ${error ? 'error' : ''}`; box.textContent = message; box.hidden = false;
-  if (!error) { clearTimeout(notice.timer); notice.timer = setTimeout(() => { box.hidden = true; }, 5000); }
-}
-function field(name, title, type = 'text', value = '', extra = '', required = true) {
-  return `<label class="field" for="f-${name}"><span>${title}${required ? ' <span class="required">*</span>' : ''}</span><input id="f-${name}" name="${name}" type="${type}" value="${escape(value)}" ${required ? 'required' : ''} ${extra}/><small class="field-error" data-error="${name}"></small></label>`;
-}
-function select(name, title, options, value = '', required = true) {
-  return `<label class="field" for="f-${name}"><span>${title}</span><select id="f-${name}" name="${name}" ${required ? 'required' : ''}>${options.map(([v,t]) => `<option value="${escape(v)}" ${String(v) === String(value) ? 'selected' : ''}>${escape(t)}</option>`).join('')}</select><small class="field-error" data-error="${name}"></small></label>`;
-}
-function showFormErrors(form, error) {
-  $('.form-error', form).textContent = error.message; $('.form-error', form).hidden = false; $('.form-error', form).focus();
-  for (const [name, message] of Object.entries(error.fields || {})) {
-    const input = form.elements.namedItem(name); if (input) { input.setAttribute('aria-invalid', 'true'); const output = $(`[data-error="${name}"]`, form); if (output) { output.textContent = message; output.id = `error-${name}`; input.setAttribute('aria-describedby', output.id); } }
-  }
-}
-async function submitForm(form, callback) {
-  if (!form.reportValidity()) return;
-  const submit = $('button[type="submit"]', form); const original = submit.textContent; submit.disabled = true; submit.textContent = 'Saving…';
-  $('.form-error', form).hidden = true;
-  form.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
-  form.querySelectorAll('.field-error').forEach(el => { el.textContent = ''; });
-  try { await callback(Object.fromEntries(new FormData(form))); }
-  catch (error) { showFormErrors(form, error); }
-  finally { submit.disabled = false; submit.textContent = original; }
+async function loadData() {
+  const [meData, sumData, wardsData, docsData, tokensData] = await Promise.all([
+    api('/me'),
+    api('/summary'),
+    api('/wards'),
+    api('/doctors'),
+    api('/tokens')
+  ]);
+  state.hospital = meData.hospital;
+  state.summary = sumData;
+  state.wards = wardsData.items || [];
+  state.doctors = docsData.items || [];
+  state.tokens = tokensData.items || [];
 }
 
-function authView(mode = 'login') {
-  const resetToken = location.hash.startsWith('#reset=') ? location.hash.slice(7) : null;
-  if (resetToken) mode = 'reset';
-  const titles = { login: 'Welcome back.', register: 'Create your workspace.', recover: 'Recover your account.', reset: 'Set a new password.' };
-  const subtitles = { login: 'Sign in to keep your hospital moving.', register: 'Start with a clean workspace for your care team.', recover: 'Get your hospital ID and a password reset link by email.', reset: 'Use a unique password with at least 12 characters.' };
-  let fields = '';
-  if (mode === 'login') fields = field('identifier', 'Hospital ID or email', 'text', '', 'autocomplete="username" maxlength="254"') + field('password', 'Password', 'password', '', 'autocomplete="current-password" maxlength="128"');
-  if (mode === 'register') fields = field('name', 'Hospital name', 'text', '', 'autocomplete="organization" maxlength="120"') + field('email', 'Administrator email', 'email', '', 'autocomplete="email" maxlength="254"') + field('phone', 'Hospital phone', 'tel', '', 'autocomplete="tel" maxlength="30"') + field('address', 'Hospital address', 'text', '', 'autocomplete="street-address" maxlength="500"') + field('password', 'Password', 'password', '', 'autocomplete="new-password" minlength="12" maxlength="128"') + '<p class="helper">At least 12 characters. You can use your email to sign in.</p>';
-  if (mode === 'recover') fields = field('email', 'Administrator email', 'email', '', 'autocomplete="email"');
-  if (mode === 'reset') fields = field('password', 'New password', 'password', '', 'autocomplete="new-password" minlength="12" maxlength="128"');
-  const securityNotice = '<div class="subtle-note" style="margin: 16px 0 20px; display: flex; align-items: center; gap: 8px;">' + icon('shield') + '<span><strong>Clinical Security</strong>: Encrypted session authentication with traceable audit logging.</span></div>';
-  const demoCard = '<div class="demo-card-banner" style="margin: 16px 0 20px; padding: 16px; border-radius: 12px; background: #ecfeff; border: 1.5px solid #06b6d4; box-shadow: 0 4px 12px rgba(8,145,178,0.08);"><div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;"><span style="font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; color: #0891b2; text-transform: uppercase;">⚡ Quick Access Demo Account</span><span style="font-size: 0.68rem; font-weight: 700; background: #0891b2; color: #fff; padding: 2px 8px; border-radius: 999px;">Live Simulation</span></div><p style="margin: 0 0 10px; font-size: 0.82rem; color: #0f172a; line-height: 1.4;">Instant access to full hospital management suite with pre-loaded ICU wards, doctor duty rosters, and OPD triage queues.</p><a href="/hospital-dashboard.html?demo=true" class="primary wide" id="quick-demo-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 16px; font-size: 0.92rem; font-weight: 700; background: #0891b2; color: #fff; text-decoration: none; border-radius: 8px; cursor: pointer; box-shadow: 0 2px 6px rgba(8,145,178,0.25);">' + icon('sparkles') + '<span>⚡ Direct Demo Login (Instant Access)</span></a><div style="font-size: 0.75rem; color: #475569; display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #a5f3fc;"><span>Demo ID/Email: <strong style="color: #0891b2;">demo@unihealth.org</strong></span><span>Password: <strong style="color: #0891b2;">Hospital@2026</strong></span></div></div>';
-
-  $('#app').innerHTML = `<main class="auth-layout"><section class="auth-story"><a href="/" class="brand">${brand}</a><div class="story-copy"><span class="eyebrow">BUILT AROUND BETTER CARE</span><h1>One workspace.<br>A connected<br><span>care team.</span></h1><p>Bring your people, capacity, and patient flow together. Make every handoff clearer with real-time ward tracking and doctor scheduling.</p><div class="story-features"><div>${icon('doctors')}<span>Care team synchronization & shift duty</span></div><div>${icon('beds')}<span>Ward capacity & real-time occupancy</span></div><div>${icon('queue')}<span>Arrival triage & emergency prioritization</span></div><div>${icon('activity')}<span>Continuous operational audit logging</span></div></div></div><p class="story-footer">UniHealth / Clinical Hospital Management v2.4</p></section><section class="auth-form-panel"><button class="icon-button auth-theme" aria-label="Toggle light and dark theme" data-action="theme">${icon('sun')}</button><div class="auth-form-wrap"><span class="eyebrow">CLINICAL WORKSPACE ACCESS</span><h2>${titles[mode]}</h2><p class="muted">${subtitles[mode]}</p>${demoCard}${securityNotice}<form id="auth-form"><div class="form-error" role="alert" tabindex="-1" hidden></div>${fields}<button class="primary wide" type="submit">${{ login: 'Sign in to workspace', register: 'Create hospital account', recover: 'Send recovery email', reset: 'Update password' }[mode]}${icon('arrow')}</button></form><div class="auth-links">${mode === 'login' ? '<button class="text-button" data-auth="recover">Forgot your password or hospital ID?</button><p>New to UniHealth? <button class="text-button" data-auth="register">Create a new workspace</button></p>' : '<button class="text-button" data-auth="login">Return to workspace sign in</button>'}</div><p class="secure-note">${icon('shield')}Protected hospital administration portal · WCAG AAA Accessible</p></div></section></main>`;
-  const demoBtn = $('#quick-demo-btn');
-  if (demoBtn) {
-    demoBtn.addEventListener('click', async () => {
-      localStorage.setItem('uh_demo_active', 'true');
-      await mockApi('/auth/login', { method: 'POST', body: { identifier: 'demo@unihealth.org', password: 'Hospital@2026' } });
-      location.assign('/hospital-dashboard.html');
-    });
-  }
-  $('#auth-form').addEventListener('submit', event => { event.preventDefault(); submitForm(event.currentTarget, async data => {
-    const result = await api(`/auth/${mode === 'recover' ? 'recover' : mode}`, { method: 'POST', body: mode === 'reset' ? { ...data, token: resetToken } : data });
-    if (mode === 'login' || mode === 'register') location.assign('/hospital-dashboard.html');
-    else { if (mode === 'reset') history.replaceState(null, '', '/index.html'); authView('login'); notice(result.message); }
-  }); });
+function promptEmergencyConfirm() {
+  const dialog = $('#editor');
+  dialog.innerHTML = `
+    <form id="emergency-confirm-form" class="emergency-confirm-dialog">
+      <div class="dialog-header" style="border-bottom: 2px solid var(--danger); padding: 18px 24px;">
+        <div>
+          <span class="eyebrow" style="color:var(--danger);">CRITICAL CLINICAL ACTION</span>
+          <h2 id="dialog-title" style="color:var(--danger); display:flex; align-items:center; gap:8px;">
+            ${icon('emergency')} Activate Code Red Emergency Protocol?
+          </h2>
+        </div>
+        <button type="button" class="icon-button" data-action="close-dialog" aria-label="Close dialog">${icon('close')}</button>
+      </div>
+      <div style="padding: 18px 24px; color: var(--text-secondary); line-height: 1.6; font-size: 14px;">
+        <p style="margin-bottom: 12px;">This will switch Easwari General Hospital into <strong>Emergency Code Red</strong>:</p>
+        <ul style="margin: 0 0 16px 20px; padding: 0;">
+          <li>All trauma resuscitation bays prioritize critical arrivals.</li>
+          <li>ICU and Critical Care surge beds locked for incoming patients.</li>
+          <li>Broadcasted live to <strong>Pharmacy Portal (5001)</strong> and <strong>Patient Companion (5003)</strong>.</li>
+        </ul>
+      </div>
+      <div class="dialog-footer" style="padding: 16px 24px;">
+        <span></span>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="secondary" data-action="close-dialog">Cancel</button>
+          <button type="submit" class="danger">${icon('emergency')} Confirm Code Red Activation</button>
+        </div>
+      </div>
+    </form>
+  `;
+  dialog.showModal();
+  $('#emergency-confirm-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    dialog.close();
+    await setHospitalStatus('emergency');
+    await refresh();
+  });
 }
 
-function applyHospitalStatus(status) {
-  state.hospital.status = status;
-  document.documentElement.dataset.hospitalStatus = status;
-  document.body.dataset.hospitalStatus = status;
-  try { localStorage.setItem('uh_hospital_status', status); } catch (e) {}
+function promptIcuReserveModal() {
+  const dialog = $('#editor');
+  dialog.innerHTML = `
+    <form id="icu-reserve-form">
+      <div class="dialog-header" style="padding: 18px 24px; border-bottom: 1px solid var(--ref-card-border);">
+        <div>
+          <span class="eyebrow" style="color:#00a896;">CRITICAL CARE ADMISSION</span>
+          <h2 id="dialog-title">ICU & Critical Care · Rapid Bed Allocation</h2>
+        </div>
+        <button type="button" class="icon-button" data-action="close-dialog" aria-label="Close dialog">${icon('close')}</button>
+      </div>
+      <div class="form-grid" style="padding: 20px 24px;">
+        <label class="field"><span>Emergency Patient Name</span><input name="patient" required placeholder="e.g. Critical Trauma Patient (45M)"/></label>
+        <label class="field"><span>Target Bed Bay</span>
+          <select name="bed_select">
+            <option>Bed #ICU-13 (Ventilator Pre-Connected)</option>
+            <option>Bed #ICU-14 (ECG Telemetry)</option>
+            <option>Bed #ICU-15 (Isolation Bay)</option>
+          </select>
+        </label>
+        <label class="field full-span"><span>Clinical Indication</span>
+          <select name="indication">
+            <option>Acute Coronary Syndrome / STEMI</option>
+            <option>Severe Polytrauma & Resuscitation</option>
+            <option>Acute Respiratory Distress (Ventilator)</option>
+            <option>Acute Stroke / Neurocritical Care</option>
+          </select>
+        </label>
+      </div>
+      <div class="dialog-footer" style="padding: 16px 24px;">
+        <span class="muted" style="font-size:12px;">${icon('shield')} Connects to live ICU ward telemetry</span>
+        <div style="display:flex; gap:10px;">
+          <button type="button" class="secondary" data-action="close-dialog">Cancel</button>
+          <button type="submit" class="primary" style="background:#00a896;">Confirm Allocation</button>
+        </div>
+      </div>
+    </form>
+  `;
+  dialog.showModal();
+  $('#icu-reserve-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const icu = state.wards.find(w => w.type === 'icu');
+    if (icu && icu.occupied < icu.capacity) {
+      await api(`/wards/${icu.id}`, { method: 'PUT', body: { ...icu, occupied: icu.occupied + 1 } });
+    }
+    dialog.close();
+    await refresh();
+    notice('ICU Bed Allocation confirmed.');
+  });
+}
 
-  const currentStatusEl = $('#current-status');
-  if (currentStatusEl) currentStatusEl.textContent = label(status);
+function promptTicketAction(tokenId) {
+  const t = state.tokens.find(item => item.id === tokenId);
+  if (!t) return;
+  const dialog = $('#editor');
+  dialog.innerHTML = `
+    <div style="padding: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0; font-size:18px;">Token #${t.number} · ${escape(t.patient)}</h3>
+        <button type="button" class="icon-button" data-action="close-dialog">${icon('close')}</button>
+      </div>
+      <p style="color:var(--ref-text-muted); font-size:13px; margin-bottom:20px;">
+        Reason: <strong>${escape(t.reason)}</strong><br/>
+        Priority: <strong style="text-transform:capitalize;">${t.priority}</strong> · Specialist: <strong>${escape(t.doctor_name || 'Unassigned')}</strong> · Status: <strong>${t.status}</strong>
+      </p>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        ${t.status === 'waiting' ? `<button class="primary" data-action="token-start" data-id="${t.id}" style="background:#00a896;">Start Consultation</button>` : ''}
+        ${t.status === 'in_progress' ? `<button class="primary" data-action="token-complete" data-id="${t.id}" style="background:#00a896;">Complete Consultation & Discharge</button>` : ''}
+        ${['waiting','in_progress'].includes(t.status) ? `<button class="secondary danger-text" data-action="token-cancel" data-id="${t.id}">Cancel Token</button>` : ''}
+      </div>
+    </div>
+  `;
+  dialog.showModal();
+}
 
-  const topBadge = $('#topbar-status-badge');
-  if (topBadge) {
-    topBadge.className = `badge ${status}`;
-    topBadge.innerHTML = `<span class="dot"></span>${label(status)}`;
-  }
+function notice(msg) {
+  const alertBox = $('#notice');
+  if (!alertBox) return;
+  alertBox.textContent = msg;
+  alertBox.className = 'notice';
+  alertBox.hidden = false;
+  setTimeout(() => { alertBox.hidden = true; }, 3500);
+}
 
-  document.querySelectorAll('.mode-pill').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.mode === status);
+function renderDashboard() {
+  const h = state.hospital;
+  const b = state.summary.beds;
+  const d = state.summary.doctors;
+  const q = state.summary.queue;
+  const recent = state.summary.recent || [];
+
+  const icuPercent = b.icu_capacity ? Math.round((b.icu_occupied / b.icu_capacity) * 100) : 0;
+  const totalOccupancyPercent = b.capacity ? Math.round((b.occupied / b.capacity) * 100) : 0;
+  const donutOffset = 238.76 - (238.76 * totalOccupancyPercent) / 100;
+
+  // Filter dynamic tokens
+  const qSearch = state.searchQuery.toLowerCase();
+  const filteredTokens = state.tokens.filter(t => {
+    const matchPriority = state.filterPriority === 'all' || t.priority === state.filterPriority;
+    const matchStatus = state.filterStatus === 'all' || t.status === state.filterStatus;
+    const matchSearch = !qSearch || (
+      String(t.number).includes(qSearch) ||
+      t.patient.toLowerCase().includes(qSearch) ||
+      (t.doctor_name && t.doctor_name.toLowerCase().includes(qSearch)) ||
+      t.priority.toLowerCase().includes(qSearch) ||
+      t.reason.toLowerCase().includes(qSearch)
+    );
+    return matchPriority && matchStatus && matchSearch;
   });
 
-  const select = $('#hospital-status');
-  if (select && select.value !== status) select.value = status;
+  return `
+    <!-- Top Greeting Area -->
+    <section class="ref-welcome-card">
+      <div class="ref-welcome-left">
+        <h1 class="ref-welcome-title">👋 Good Afternoon, Dr. Mohith</h1>
+        <p class="ref-welcome-sub">Here's what's happening at Easwari General Hospital today.</p>
+      </div>
+      <div class="ref-welcome-right">
+        <div class="ref-welcome-hospital-meta">
+          <div class="ref-welcome-hospital-name">${escape(h.name)}</div>
+          <div class="ref-welcome-hospital-loc">📍 ${escape(h.address)}</div>
+        </div>
+        <div class="ref-welcome-hospital-thumb">
+          <img src="/assets/hospital-welcome-facility.svg" alt="Easwari General Hospital Facade" />
+        </div>
+      </div>
+    </section>
 
-  let banner = $('#emergency-active-banner');
-  if (status === 'emergency') {
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'emergency-active-banner';
-      banner.className = 'emergency-banner-alert';
-      banner.innerHTML = `
-        <div class="emergency-banner-content">
-          <div class="emergency-pulse-ring"><span class="emergency-siren-dot"></span></div>
-          <div>
-            <strong>🚨 CODE RED: EMERGENCY TRIAGE PROTOCOL ACTIVE</strong>
-            <span>All trauma bays, triage stations & ICU beds prioritised for critical incoming arrivals.</span>
+    <!-- Operational Mode Strip -->
+    <section class="ref-mode-strip">
+      <div class="ref-mode-left">
+        <div class="ref-pulse-box">
+          ${icon('pulse')}
+        </div>
+        <span class="ref-mode-label">Operational Mode:</span>
+        <span class="ref-mode-badge-dropdown" id="ref-current-status-badge">${h.status === 'emergency' ? 'Emergency' : h.status === 'busy' ? 'Surge' : 'Normal'} ⌵</span>
+      </div>
+
+      <!-- Segmented Button Controls -->
+      <div class="ref-mode-switch-group" role="radiogroup" aria-label="Hospital operational mode">
+        <button type="button" class="ref-mode-btn normal ${h.status === 'normal' ? 'active' : ''}" data-mode="normal">
+          Normal
+        </button>
+        <button type="button" class="ref-mode-btn surge ${h.status === 'busy' ? 'active' : ''}" data-mode="busy">
+          ⚠️ Surge
+        </button>
+        <button type="button" class="ref-mode-btn emergency ${h.status === 'emergency' ? 'active' : ''}" data-mode="emergency">
+          🚨 Emergency
+        </button>
+      </div>
+
+      <div class="ref-mode-right">
+        <div class="ref-sys-status-text">
+          <span class="ref-sys-status-title">
+            <span class="ref-sys-status-dot"></span> All systems operational
+          </span>
+          <span class="ref-sys-status-updated">Hospital Time: ${date(new Date().toISOString(), true)}</span>
+        </div>
+        <button type="button" class="ref-refresh-icon-btn" data-action="refresh" title="Refresh metrics">
+          ${icon('refresh')}
+        </button>
+      </div>
+    </section>
+
+    <!-- Four KPI Cards Grid (Computed from actual data) -->
+    <section class="ref-kpi-grid">
+      <!-- Total Beds -->
+      <article class="ref-kpi-card">
+        <div class="ref-kpi-icon-box beds">${icon('beds')}</div>
+        <div class="ref-kpi-content">
+          <span class="ref-kpi-title">Total Beds</span>
+          <span class="ref-kpi-number">${b.capacity}</span>
+          <span class="ref-kpi-sub positive">↑ ${b.capacity - b.occupied} available</span>
+        </div>
+      </article>
+
+      <!-- ICU Beds -->
+      <article class="ref-kpi-card">
+        <div class="ref-kpi-icon-box icu">${icon('heart')}</div>
+        <div class="ref-kpi-content">
+          <span class="ref-kpi-title">ICU Beds</span>
+          <span class="ref-kpi-number">${b.icu_occupied} / ${b.icu_capacity}</span>
+          <span class="ref-kpi-sub">${icuPercent}% occupied</span>
+        </div>
+      </article>
+
+      <!-- Doctors On Duty -->
+      <article class="ref-kpi-card">
+        <div class="ref-kpi-icon-box doctors">${icon('user')}</div>
+        <div class="ref-kpi-content">
+          <span class="ref-kpi-title">Doctors On Duty</span>
+          <span class="ref-kpi-number">${d.on_duty}</span>
+          <span class="ref-kpi-sub positive">of ${d.total} on duty</span>
+        </div>
+      </article>
+
+      <!-- OPD Queue -->
+      <article class="ref-kpi-card">
+        <div class="ref-kpi-icon-box queue">${icon('queue')}</div>
+        <div class="ref-kpi-content">
+          <span class="ref-kpi-title">OPD Queue</span>
+          <span class="ref-kpi-number">${q.waiting}</span>
+          <span class="ref-kpi-sub">~ ${q.average_wait} min avg. wait</span>
+        </div>
+      </article>
+    </section>
+
+    <!-- Three-Panel Middle Row -->
+    <section class="ref-mid-row-grid">
+      <!-- Ward Occupancy -->
+      <article class="ref-card-panel">
+        <div class="ref-panel-header">
+          <div class="ref-panel-header-left">
+            <span class="ref-panel-icon">${icon('beds')}</span>
+            <div class="ref-panel-title-wrap">
+              <h3>Ward Occupancy</h3>
+              <p>Overall Bed Utilization</p>
+            </div>
+          </div>
+          <a href="/hospital-beds.html" class="ref-panel-link">View Wards ➔</a>
+        </div>
+
+        <div class="ref-ward-occ-body">
+          <div class="ref-ward-donut-wrap">
+            <svg class="ref-ward-donut-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#e6eff2" stroke-width="12" />
+              <circle cx="50" cy="50" r="38" fill="none" stroke="#00a896" stroke-width="12"
+                      stroke-dasharray="238.76" stroke-dashoffset="${donutOffset}" stroke-linecap="round" />
+            </svg>
+            <div class="ref-donut-center">
+              <span class="ref-donut-pct">${totalOccupancyPercent}%</span>
+              <span class="ref-donut-lbl">Occupied</span>
+            </div>
+          </div>
+
+          <!-- Real Ward Bars from Database -->
+          <div class="ref-ward-bars-list">
+            ${state.wards.map(w => {
+              const pct = w.capacity ? Math.round((w.occupied / w.capacity) * 100) : 0;
+              return `
+                <div class="ref-ward-bar-item">
+                  <div class="ref-ward-bar-meta">
+                    <span class="ref-ward-name-dot">
+                      <span class="ref-ward-dot"></span>
+                      ${escape(w.name)}
+                    </span>
+                    <span class="ref-ward-count">${w.occupied} / ${w.capacity}</span>
+                  </div>
+                  <div class="ref-ward-prog-track">
+                    <div class="ref-ward-prog-fill" style="width: ${pct}%;"></div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
-        <div class="emergency-banner-badge">Priority Triage Level 1</div>
-      `;
-      const main = $('#main');
-      if (main) main.insertBefore(banner, main.firstChild);
-    } else {
-      banner.className = 'emergency-banner-alert';
-      banner.innerHTML = `
-        <div class="emergency-banner-content">
-          <div class="emergency-pulse-ring"><span class="emergency-siren-dot"></span></div>
-          <div>
-            <strong>🚨 CODE RED: EMERGENCY TRIAGE PROTOCOL ACTIVE</strong>
-            <span>All trauma bays, triage stations & ICU beds prioritised for critical incoming arrivals.</span>
+      </article>
+
+      <!-- Recent Activity (Computed from actual audit logs) -->
+      <article class="ref-card-panel">
+        <div class="ref-panel-header">
+          <div class="ref-panel-header-left">
+            <span class="ref-panel-icon">${icon('clock')}</span>
+            <div class="ref-panel-title-wrap">
+              <h3>Recent Activity</h3>
+              <p>Live Updates</p>
+            </div>
+          </div>
+          <a href="/hospital-audit.html" class="ref-panel-link">View All ➔</a>
+        </div>
+
+        <div class="ref-activity-list">
+          ${recent.slice(0, 4).map(a => `
+            <div class="ref-activity-item">
+              <div class="ref-activity-item-left">
+                <div class="ref-act-icon-dot ${a.action.includes('token') ? 'purple' : a.action.includes('ward') ? 'cyan' : 'green'}">
+                  ${a.action.includes('ward') ? icon('beds') : a.action.includes('token') ? icon('user') : icon('shield')}
+                </div>
+                <span class="ref-act-desc">${escape(a.details)}</span>
+              </div>
+              <span class="ref-act-time">${timeAgo(a.created_at)}</span>
+            </div>
+          `).join('')}
+        </div>
+      </article>
+
+      <!-- Today's Summary (Computed from actual records) -->
+      <article class="ref-card-panel">
+        <div class="ref-panel-header">
+          <div class="ref-panel-header-left">
+            <span class="ref-panel-icon">${icon('cal')}</span>
+            <div class="ref-panel-title-wrap">
+              <h3>Today's Summary</h3>
+              <p>${date(new Date().toISOString(), true).slice(0, 11)}</p>
+            </div>
           </div>
         </div>
-        <div class="emergency-banner-badge">Priority Triage Level 1</div>
-      `;
-    }
-  } else if (status === 'busy' || status === 'overloaded') {
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'emergency-active-banner';
-      banner.className = 'busy-banner-alert';
-      banner.innerHTML = `
-        <div class="emergency-banner-content">
-          <div class="busy-pulse-ring"><span class="busy-dot"></span></div>
-          <div>
-            <strong>⚠️ SURGE CAPACITY PROTOCOL ACTIVE</strong>
-            <span>Heightened patient arrival flow across OPD and emergency triage. Bed reassignments in progress.</span>
+
+        <div class="ref-summary-list">
+          <div class="ref-summary-row">
+            <div class="ref-summary-row-left">
+              <span style="color:#16a34a;">${icon('admit')}</span>
+              <span>Total Tokens</span>
+            </div>
+            <strong class="ref-summary-val">${String(state.tokens.length).padStart(2, '0')}</strong>
+          </div>
+          <div class="ref-summary-row">
+            <div class="ref-summary-row-left">
+              <span style="color:#0284c7;">${icon('discharge')}</span>
+              <span>Discharged Today</span>
+            </div>
+            <strong class="ref-summary-val">${String(q.completed_today).padStart(2, '0')}</strong>
+          </div>
+          <div class="ref-summary-row">
+            <div class="ref-summary-row-left">
+              <span style="color:#dc2626;">${icon('scissors')}</span>
+              <span>Active Consultations</span>
+            </div>
+            <strong class="ref-summary-val">${String(q.in_progress).padStart(2, '0')}</strong>
+          </div>
+          <div class="ref-summary-row">
+            <div class="ref-summary-row-left">
+              <span style="color:#ea580c;">${icon('emergency')}</span>
+              <span>Emergency Cases</span>
+            </div>
+            <strong class="ref-summary-val">${String(q.emergencies).padStart(2, '0')}</strong>
           </div>
         </div>
-        <div class="emergency-banner-badge">Elevated Surge Mode</div>
-      `;
-      const main = $('#main');
-      if (main) main.insertBefore(banner, main.firstChild);
-    } else {
-      banner.className = 'busy-banner-alert';
-      banner.innerHTML = `
-        <div class="emergency-banner-content">
-          <div class="busy-pulse-ring"><span class="busy-dot"></span></div>
-          <div>
-            <strong>⚠️ SURGE CAPACITY PROTOCOL ACTIVE</strong>
-            <span>Heightened patient arrival flow across OPD and emergency triage. Bed reassignments in progress.</span>
+      </article>
+    </section>
+
+    <!-- Bottom Row: OPD Triage Queue Table & ICU Feature Card -->
+    <section class="ref-bottom-row-grid">
+      <!-- Left: Real OPD Triage Queue Table with 15 dynamic tickets -->
+      <article class="ref-opd-panel">
+        <div class="ref-panel-header">
+          <div class="ref-panel-header-left">
+            <span class="ref-panel-icon">${icon('queue')}</span>
+            <div class="ref-panel-title-wrap">
+              <h3>OPD Triage Queue</h3>
+              <p>Live patient queue and consultation status (${filteredTokens.length} active tickets)</p>
+            </div>
+          </div>
+          <div class="ref-opd-header-filters">
+            <select class="ref-select-pill" id="ref-filter-priority" aria-label="Filter priority">
+              <option value="all" ${state.filterPriority === 'all' ? 'selected' : ''}>All Priority ⌵</option>
+              <option value="emergency" ${state.filterPriority === 'emergency' ? 'selected' : ''}>Emergency</option>
+              <option value="urgent" ${state.filterPriority === 'urgent' ? 'selected' : ''}>Urgent</option>
+              <option value="routine" ${state.filterPriority === 'routine' ? 'selected' : ''}>Routine</option>
+            </select>
+            <select class="ref-select-pill" id="ref-filter-status" aria-label="Filter status">
+              <option value="all" ${state.filterStatus === 'all' ? 'selected' : ''}>All Status ⌵</option>
+              <option value="waiting" ${state.filterStatus === 'waiting' ? 'selected' : ''}>Waiting</option>
+              <option value="in_progress" ${state.filterStatus === 'in_progress' ? 'selected' : ''}>In Consultation</option>
+              <option value="completed" ${state.filterStatus === 'completed' ? 'selected' : ''}>Completed</option>
+              <option value="cancelled" ${state.filterStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
           </div>
         </div>
-        <div class="emergency-banner-badge">Elevated Surge Mode</div>
-      `;
-    }
-  } else {
-    if (banner) banner.remove();
+
+        <div class="ref-table-wrap">
+          <table class="ref-table">
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>Patient Name</th>
+                <th>Reason</th>
+                <th>Priority</th>
+                <th>Specialist</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filteredTokens.map(t => `
+                <tr>
+                  <td class="ref-token-id">#${t.number}</td>
+                  <td>
+                    <div class="ref-patient-cell">
+                      <div class="ref-patient-icon">${icon('user')}</div>
+                      <span>${escape(t.patient)}</span>
+                    </div>
+                  </td>
+                  <td><span style="font-size:12px;color:var(--ref-text-muted);">${escape(t.reason)}</span></td>
+                  <td>
+                    <span class="ref-priority-pill ${t.priority}">
+                      ${t.priority === 'emergency' ? 'Emergency' : t.priority === 'urgent' ? 'Urgent' : 'Routine'}
+                    </span>
+                  </td>
+                  <td>${escape(t.doctor_name || 'Unassigned')}</td>
+                  <td>
+                    <div class="ref-status-cell ${t.status === 'in_progress' ? 'consultation' : t.status}">
+                      <span class="ref-status-dot"></span>
+                      ${t.status === 'in_progress' ? 'In Consultation' : t.status === 'waiting' ? 'Waiting' : t.status === 'completed' ? 'Completed' : 'Cancelled'}
+                    </div>
+                  </td>
+                  <td>
+                    <button type="button" class="ref-action-dots-btn" data-action="ticket-actions" data-id="${t.id}" title="Care actions">
+                      ${icon('moreDots')}
+                    </button>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- Right: ICU & Critical Care Card -->
+      <article class="ref-icu-card">
+        <img class="ref-icu-card-bg-img" src="/assets/icu-operating-theater.svg" alt="Surgical ICU & Critical Care" />
+        <div class="ref-icu-card-overlay"></div>
+        <div class="ref-icu-card-bottom">
+          <div class="ref-icu-card-info">
+            <div class="ref-icu-heart-icon-box">
+              ${icon('shield')}
+            </div>
+            <div class="ref-icu-title-wrap">
+              <h4>ICU & Critical Care</h4>
+              <p>Real-time monitoring: ${b.icu_occupied}/${b.icu_capacity} Beds</p>
+            </div>
+          </div>
+          <button type="button" class="ref-icu-arrow-btn" data-action="open-icu-modal" title="Reserve ICU bed">
+            ${icon('arrowRight')}
+          </button>
+        </div>
+      </article>
+    </section>
+  `;
+}
+
+function renderSecondaryPage(viewName) {
+  if (viewName === 'doctors') {
+    return `
+      <div class="ref-card-panel" style="margin-top:16px;">
+        <div class="ref-panel-header">
+          <div class="ref-panel-header-left">
+            <span class="ref-panel-icon">${icon('doctors')}</span>
+            <div class="ref-panel-title-wrap">
+              <h3>Doctor Duty Management</h3>
+              <p>Manage care team duty shift coverage</p>
+            </div>
+          </div>
+        </div>
+        <div class="ref-table-wrap">
+          <table class="ref-table">
+            <thead>
+              <tr><th>Doctor Name</th><th>Specialty</th><th>Department</th><th>Shift Time</th><th>Room</th><th>Duty Status</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              ${state.doctors.map(d => `
+                <tr>
+                  <td><strong>${escape(d.name)}</strong></td>
+                  <td>${escape(d.specialty)}</td>
+                  <td>${escape(d.department)}</td>
+                  <td>${d.shift_start} – ${d.shift_end}</td>
+                  <td>${escape(d.room)}</td>
+                  <td><span class="badge ${d.on_duty ? 'in_progress' : 'off_duty'}">${d.on_duty ? 'On Duty' : 'Off Duty'}</span></td>
+                  <td><button class="secondary" data-action="toggle-duty" data-id="${d.id}">${d.on_duty ? 'Set Off Duty' : 'Mark On Duty'}</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
   }
+  if (viewName === 'beds') {
+    return `
+      <div class="ref-card-panel" style="margin-top:16px;">
+        <div class="ref-panel-header">
+          <div class="ref-panel-header-left">
+            <span class="ref-panel-icon">${icon('beds')}</span>
+            <div class="ref-panel-title-wrap">
+              <h3>Hospital Wards & Bed Headroom</h3>
+              <p>Occupancy and capacity configuration</p>
+            </div>
+          </div>
+        </div>
+        <div class="ref-table-wrap">
+          <table class="ref-table">
+            <thead>
+              <tr><th>Ward Name</th><th>Type</th><th>Total Capacity</th><th>Occupied</th><th>Available</th><th>Utilization</th></tr>
+            </thead>
+            <tbody>
+              ${state.wards.map(w => {
+                const pct = w.capacity ? Math.round((w.occupied / w.capacity) * 100) : 0;
+                return `
+                  <tr>
+                    <td><strong>${escape(w.name)}</strong></td>
+                    <td><span class="badge in_progress">${escape(w.type)}</span></td>
+                    <td>${w.capacity} beds</td>
+                    <td>${w.occupied} occupied</td>
+                    <td><strong>${w.capacity - w.occupied} beds</strong></td>
+                    <td><span class="badge ${pct >= 85 ? 'emergency' : pct >= 70 ? 'urgent' : 'available'}">${pct}%</span></td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+  return renderDashboard();
 }
 
 function shell() {
   const h = state.hospital;
-  $('#app').innerHTML = `<a class="skip" href="#main">Skip to main content</a><div class="workspace"><aside class="sidebar" id="sidebar"><a class="brand" href="/hospital-dashboard.html">${brand}</a><div class="workspace-tag">Hospital workspace</div><nav aria-label="Main navigation">${Object.entries(labels).map(([key, name]) => `<a href="/hospital-${key}.html" ${key === page ? 'aria-current="page" class="active"' : ''}>${icon(pageIcons[key])}<span>${name}</span>${key === page ? '<span class="nav-indicator"></span>' : ''}</a>`).join('')}</nav><div class="sidebar-bottom"><div class="care-note">${icon('shield')}<strong>Care starts with clarity.</strong><p>One shared view for your hospital operations.</p></div><div class="profile"><span class="avatar">${escape(h.name.slice(0, 2).toUpperCase())}</span><div><strong>${escape(h.name)}</strong><small>Administrator</small></div></div><button class="logout" data-action="logout">${icon('logout')}Sign out</button></div></aside><div class="main-wrap"><header class="topbar"><div class="breadcrumb"><button class="icon-button mobile-menu" data-action="menu" aria-label="Toggle navigation" aria-expanded="false" aria-controls="sidebar">${icon('menu')}</button><span>Workspace</span><span class="separator">/</span><strong>${labels[page]}</strong></div><div class="topbar-actions"><span class="badge ${h.status}" id="topbar-status-badge"><span class="dot"></span>${label(h.status)}</span><span class="date-today">${new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', day: 'numeric', month: 'short', year: 'numeric' }).format(new Date())}</span><button class="icon-button" data-action="theme" aria-label="Toggle light and dark theme">${icon('sun')}</button><span class="avatar small" title="${escape(h.name)}">${escape(h.name.slice(0, 2).toUpperCase())}</span></div></header><main id="main" tabindex="-1"><div class="page-heading"><div><div class="eyebrow">HOSPITAL OPERATIONS</div><h1>${labels[page]}</h1><p>${hints[page]}</p></div><div class="heading-actions"><button class="secondary" data-action="refresh">${icon('refresh')}Refresh</button>${['doctors','beds','tokens'].includes(page) ? button({ doctors: 'Add doctor', beds: 'Add ward', tokens: 'New patient token' }[page], `add-${page}`) : ''}</div></div><div class="status-strip">
-  <div class="status-title-group">
-    <div class="status-icon-wrap">${icon('shield')}</div>
-    <div>
-      <span class="status-sub">Operational Mode</span>
-      <strong id="current-status">${label(h.status)}</strong>
-    </div>
-  </div>
-  <div class="status-mode-switcher" role="radiogroup" aria-label="Hospital operational mode">
-    <button type="button" class="mode-pill mode-normal ${h.status === 'normal' ? 'active' : ''}" data-mode="normal" title="Standard Clinical Operations">
-      <span class="mode-radar-dot"></span>
-      <span>Normal</span>
-    </button>
-    <button type="button" class="mode-pill mode-busy ${h.status === 'busy' ? 'active' : ''}" data-mode="busy" title="Surge Capacity & Elevated OPD">
-      <span class="mode-radar-dot"></span>
-      <span>Surge / Busy</span>
-    </button>
-    <button type="button" class="mode-pill mode-emergency ${h.status === 'emergency' ? 'active' : ''}" data-mode="emergency" title="Emergency Triage & Trauma Priority">
-      <span class="mode-radar-dot"></span>
-      <span>🚨 Emergency</span>
-    </button>
-  </div>
-  <label class="status-control">
-    <span>Quick select</span>
-    <select id="hospital-status" aria-label="Hospital operational status">
-      ${['normal','busy','overloaded','emergency'].map(s => `<option value="${s}" ${h.status === s ? 'selected' : ''}>${label(s)}</option>`).join('')}
-    </select>
-  </label>
-</div><div id="content"><div class="loading" role="status">Loading your workspace…</div></div><footer class="page-footer"><span>UniHealth <span class="footer-dot">·</span> ${escape(h.id)}</span><span id="updated">Hospital time: Asia/Kolkata</span></footer></main></div></div><div id="sidebar-backdrop" class="sidebar-backdrop" data-action="close-sidebar"></div><dialog id="editor" aria-labelledby="dialog-title"></dialog>`;
-  // Initialize status theme
-  const initialStatus = localStorage.getItem('uh_hospital_status') || h.status || 'normal';
-  applyHospitalStatus(initialStatus);
+  const currentView = page === 'dashboard' || page === 'tokens' ? renderDashboard() : renderSecondaryPage(page);
 
-  // Mode pill clicks
-  document.querySelectorAll('.mode-pill').forEach(btn => {
+  $('#app').innerHTML = `
+    <div class="workspace">
+      <!-- Left Navigation Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div>
+          <!-- Brand Logo & Title -->
+          <div class="ref-brand-header">
+            <div class="ref-brand-icon-box">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v16m-8-8h16" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div class="ref-brand-title">UniHealth</div>
+              <div class="ref-brand-subtitle">Healthcare Ecosystem</div>
+            </div>
+          </div>
+
+          <div class="ref-sidebar-section-title">Hospital Management</div>
+
+          <!-- Nav Items -->
+          <nav aria-label="Hospital Management Navigation">
+            ${Object.entries(labels).map(([key, name]) => `
+              <a href="/hospital-${key === 'dashboard' ? 'dashboard' : key}.html" class="${key === page ? 'active' : ''}">
+                ${icon(pageIcons[key])}
+                <span>${name}</span>
+              </a>
+            `).join('')}
+          </nav>
+        </div>
+
+        <!-- Sidebar Bottom Exterior Photo -->
+        <div class="ref-sidebar-image-card">
+          <img src="/assets/hospital-sidebar-building.svg" alt="UniHealth Medical Center" />
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="main-wrap">
+        <!-- Topbar -->
+        <header class="topbar">
+          <!-- Search Input with Ctrl+K -->
+          <div class="ref-topbar-search">
+            ${icon('search')}
+            <input type="search" id="ref-global-search" placeholder="Search patient, doctor, ward, or medicine..." aria-label="Search" value="${escape(state.searchQuery)}"/>
+            <kbd class="ref-search-kbd">Ctrl + K</kbd>
+          </div>
+
+          <!-- Right Controls -->
+          <div class="ref-topbar-right">
+            <button type="button" class="ref-topbar-icon-btn" data-action="theme" aria-label="Toggle theme">
+              ${icon('sun')}
+            </button>
+            <button type="button" class="ref-topbar-icon-btn" data-action="notifications" aria-label="Notifications" title="Notifications">
+              ${icon('bell')}
+              <span class="ref-bell-badge"></span>
+            </button>
+            <div class="ref-user-profile">
+              <div class="ref-user-avatar">
+                <img src="/assets/admin-avatar.svg" alt="Dr. Mohith Dharshan" />
+              </div>
+              <div class="ref-user-info">
+                <span class="ref-user-name">${escape(h.admin_name)}</span>
+                <span class="ref-user-role">${escape(h.admin_role)}</span>
+              </div>
+              <span class="ref-user-chevron">⌵</span>
+            </div>
+          </div>
+        </header>
+
+        <main id="main" tabindex="-1">
+          <div id="content">${currentView}</div>
+        </main>
+      </div>
+    </div>
+
+    <div id="sidebar-backdrop" class="sidebar-backdrop" data-action="close-sidebar"></div>
+    <dialog id="editor" aria-labelledby="dialog-title"></dialog>
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+  `;
+
+  attachEventListeners();
+}
+
+function attachEventListeners() {
+  // Global search input
+  $('#ref-global-search')?.addEventListener('input', e => {
+    state.searchQuery = e.target.value.trim();
+    $('#content').innerHTML = page === 'dashboard' || page === 'tokens' ? renderDashboard() : renderSecondaryPage(page);
+    attachEventListeners();
+  });
+
+  // Operational mode buttons
+  document.querySelectorAll('.ref-mode-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       const mode = btn.dataset.mode;
       if (mode === state.hospital.status) return;
-      applyHospitalStatus(mode);
-      try {
-        await api('/hospital/status', { method: 'PATCH', body: { status: mode } });
-        notice(`Operational mode switched to ${label(mode).toUpperCase()}. Visual theme updated.`);
-      } catch (err) {
-        console.warn('Mode sync warning:', err);
+      if (mode === 'emergency') {
+        promptEmergencyConfirm();
+      } else {
+        await setHospitalStatus(mode);
+        await refresh();
       }
     });
   });
 
-  // Dropdown change
-  $('#hospital-status').addEventListener('change', async event => {
-    const control = event.target; control.disabled = true;
-    const newStatus = control.value;
-    applyHospitalStatus(newStatus);
-    try {
-      await api('/hospital/status', { method: 'PATCH', body: { status: newStatus } });
-      notice(`Operational mode updated to ${label(newStatus).toUpperCase()}.`);
-    } catch (error) {
-      control.value = state.hospital.status;
-      applyHospitalStatus(state.hospital.status);
-      notice(error.message, true);
-    } finally {
-      control.disabled = false;
-    }
+  // Priority filter
+  $('#ref-filter-priority')?.addEventListener('change', e => {
+    state.filterPriority = e.target.value;
+    $('#content').innerHTML = renderDashboard();
+    attachEventListeners();
+  });
+
+  // Status filter
+  $('#ref-filter-status')?.addEventListener('change', e => {
+    state.filterStatus = e.target.value;
+    $('#content').innerHTML = renderDashboard();
+    attachEventListeners();
   });
 }
-function stat(title, value, note, symbol, color = '') { return `<article class="stat ${color}"><div class="stat-top"><span>${title}</span><span class="stat-icon">${icon(symbol)}</span></div><strong class="stat-value">${value}</strong><p>${note}</p></article>`; }
-function progress(occupied, capacity) { return `<progress max="${capacity || 1}" value="${occupied}" aria-label="${occupied} of ${capacity} beds occupied"></progress>`; }
-function wardRows(wards) {
-  return wards.map(w => `<div class="capacity-row"><div class="capacity-info"><span class="ward-symbol">${icon('beds')}</span><div><strong>${escape(w.name)}</strong><small>${label(w.type)} ward</small></div><span>${w.occupied}<span class="muted"> / ${w.capacity} occupied</span></span></div>${progress(w.occupied,w.capacity)}</div>`).join('');
-}
-function activity(items) { return items.length ? `<div class="activity">${items.map(a => `<div class="activity-item"><span class="activity-dot"></span><div><strong>${escape(a.details)}</strong><small>${escape(a.actor)} <span>· ${date(a.created_at)}</span></small></div></div>`).join('')}</div>` : empty('No activity yet', 'Changes made in this workspace will appear here.'); }
-function dashboard() {
-  const { beds: b, doctors: d, queue: q, recent } = state.summary;
-  const icuPercent = b.icu_capacity ? Math.round((b.icu_occupied / b.icu_capacity) * 100) : 0;
-  const icuBadgeClass = icuPercent >= 90 ? 'emergency' : icuPercent >= 70 ? 'urgent' : 'available';
-  return `<section class="welcome"><div><span class="eyebrow">CLINICAL OVERVIEW & CARE HANDOFFS</span><h2>Ready for the day ahead.</h2><p>${escape(state.hospital.name)} — unified care operations, capacity tracking, and arrival queue.</p><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px;"><a class="primary" href="/hospital-tokens.html">Open patient queue ${icon('arrow')}</a><a class="secondary" href="/hospital-beds.html">${icon('beds')} Ward status</a><a class="secondary" href="/hospital-doctors.html">${icon('doctors')} Team duty</a></div></div><div class="welcome-art" aria-hidden="true"><svg viewBox="0 0 300 160" fill="none"><circle cx="175" cy="80" r="68"/><circle cx="175" cy="80" r="46"/><path d="M10 85h90l16-25 21 56 26-83 22 52h100"/></svg><span>People · Capacity · Care</span></div></section><section class="stats" aria-label="Hospital summary">${stat('Available beds', b.capacity - b.occupied, `${b.occupied} occupied of ${b.capacity} total`, 'beds', 'blue')}${stat('Doctors on duty', d.on_duty, `${d.total} care specialists in team`, 'doctors', 'teal')}${stat('Patients waiting', q.waiting, `${q.in_progress} consultations active`, 'queue', 'amber')}${stat('Average wait time', q.average_wait === null ? '—' : `${q.average_wait}<small> min</small>`, 'Elapsed triage time in queue', 'clock', 'violet')}</section><div class="dashboard-grid"><section class="panel"><div class="panel-heading"><div><h2>Bed capacity</h2><p>Current occupancy and admission headroom across wards</p></div><a class="text-link" href="/hospital-beds.html">Manage wards ${icon('arrow')}</a></div>${state.wards.length ? wardRows(state.wards.slice(0,5)) : empty('Your wards will appear here', 'Add a ward and its capacity to get started.', '<a class="secondary" href="/hospital-beds.html">Set up wards</a>')}</section><section class="panel"><div class="panel-heading"><div><h2>At a glance</h2><p>Real-time operational status</p></div>${icon('grid')}</div><div class="glance-row"><span>ICU occupancy</span><div style="display:flex;align-items:center;gap:8px;"><strong>${b.icu_occupied} / ${b.icu_capacity}</strong><span class="badge ${icuBadgeClass}">${icuPercent}%</span></div></div><div class="glance-row"><span>Active emergency tokens</span><strong style="color:var(--red);">${q.emergencies}</strong></div><div class="glance-row"><span>Completed consultations today</span><strong style="color:var(--emerald);">${q.completed_today}</strong></div><div class="subtle-note">${icon('shield')} Connected live to hospital MySQL database. Timestamps logged in Asia/Kolkata (IST).</div></section><section class="panel full-span"><div class="panel-heading"><div><h2>Recent activity</h2><p>The latest updates from your workspace audit stream</p></div><a class="text-link" href="/hospital-audit.html">View full audit log ${icon('arrow')}</a></div>${activity(recent)}</section></div>`;
-}
-function toolbar(kind, filters = '') { return `<div class="toolbar"><label class="search">${icon('search')}<input type="search" id="search" placeholder="Search ${kind}…" aria-label="Search ${kind}"/></label>${filters}<span class="result-count" id="result-count"></span></div><div id="records"></div>`; }
-function doctorsPage() {
-  const onDuty = state.doctors.filter(d => d.on_duty).length;
-  return `<section class="stats three">${stat('Total doctors',state.doctors.length,'Registered care team','doctors','blue')}${stat('On duty',onDuty,'Available for consultations','doctors','teal')}${stat('Off duty',state.doctors.length-onDuty,'Not currently on duty','clock','amber')}</section><section class="panel">${toolbar('doctors', '<select id="filter" aria-label="Filter doctor duty status"><option value="all">All duty statuses</option><option value="on">On duty</option><option value="off">Off duty</option></select>')}</section>`;
-}
-function bedsPage() {
-  const capacity = state.wards.reduce((s,w) => s+w.capacity,0), occupied = state.wards.reduce((s,w) => s+w.occupied,0);
-  return `<section class="stats three">${stat('Total beds',capacity,`${state.wards.length} configured wards`,'beds','blue')}${stat('Available beds',capacity-occupied,'Ready for admission','beds','teal')}${stat('Occupancy',capacity ? `${Math.round(occupied/capacity*100)}<small>%</small>` : '—',`${occupied} beds currently occupied`,'chart','amber')}</section><section class="panel">${toolbar('wards', '<select id="filter" aria-label="Filter ward type"><option value="all">All ward types</option><option value="general">General</option><option value="emergency">Emergency</option><option value="icu">ICU</option></select>')}</section>`;
-}
-function tokensPage() {
-  const count = status => state.tokens.filter(t => t.status === status).length;
-  const inConsult = state.tokens.filter(t => t.status === 'in_progress');
-  const nowServing = inConsult.length ? inConsult.map(t => `#${String(t.number).padStart(3,'0')}`).join(', ') : 'None in progress';
-  return `<section class="stats three">${stat('Waiting',count('waiting'),'Awaiting triage & consultation','queue','amber')}${stat('In consultation',count('in_progress'),'Active doctor care','doctors','blue')}${stat('Completed today',count('completed'),'Visits closed & recorded','shield','teal')}</section><div class="status-strip" style="background:linear-gradient(135deg,var(--tint) 0%,var(--surface) 100%);border-color:var(--tint-strong);margin-bottom:24px;"><div>${icon('queue')}<span><strong>Now Serving OPD:</strong></span><strong style="font-size:18px;color:var(--primary);letter-spacing:0.04em;">${nowServing}</strong></div><div style="font-size:12px;color:var(--muted);">${icon('clock')} Average wait time: ${state.summary?.queue?.average_wait ?? '—'} mins</div></div><section class="panel"><div class="panel-heading"><div><h2>Patient triage & consultation queue</h2><p>Emergency arrivals appear first with highest operational priority.</p></div></div>${toolbar('patients or token numbers', '<select id="filter" aria-label="Filter token status"><option value="active">Active queue (Waiting + In progress)</option><option value="all">All records</option><option value="waiting">Waiting only</option><option value="in_progress">In consultation</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select>')}</section>`;
-}
-function renderRecords() {
-  const search = ($('#search')?.value || '').toLowerCase(), filter = $('#filter')?.value || 'all';
-  const records = page === 'doctors' ? state.doctors.filter(d => `${d.name} ${d.specialty} ${d.department} ${d.license}`.toLowerCase().includes(search) && (filter === 'all' || Boolean(d.on_duty) === (filter === 'on'))) : page === 'beds' ? state.wards.filter(w => w.name.toLowerCase().includes(search) && (filter === 'all' || w.type === filter)) : state.tokens.filter(t => `${t.patient} ${t.number} ${t.reason}`.toLowerCase().includes(search) && (filter === 'all' || filter === t.status || filter === 'active' && ['waiting','in_progress'].includes(t.status)));
-  $('#result-count').textContent = `${records.length} ${records.length === 1 ? 'record' : 'records'}`;
-  if (!records.length) {
-    const any = (page === 'doctors' ? state.doctors : page === 'beds' ? state.wards : state.tokens).length;
-    $('#records').innerHTML = empty(any ? 'No matching records' : { doctors: 'Build your care team', beds: 'Make room for better care', tokens: 'Your queue is clear' }[page], any ? 'Try another search or filter.' : { doctors: 'Add your first doctor to manage duty status and consultations.', beds: 'Add your first ward with its actual bed capacity.', tokens: 'New patient tokens will appear here when you create them.' }[page], any ? '' : button({ doctors: 'Add your first doctor', beds: 'Add your first ward', tokens: 'Create a patient token' }[page], `add-${page}`)); return;
-  }
-  if (page === 'doctors') $('#records').innerHTML = `<div class="record-grid">${records.map(d => `<article class="doctor-card"><div class="card-top"><span class="doctor-avatar" title="${escape(d.name)}">${escape(d.name.split(' ').map(w => w[0]).slice(0,2).join(''))}</span><div style="display:flex;align-items:center;gap:6px;">${badge(d.on_duty ? 'on_duty' : 'off_duty')}</div></div><h3>${escape(d.name)}</h3><p class="specialty"><span class="badge in_progress" style="margin-right:6px;font-size:10px;">${escape(d.specialty)}</span>${d.department ? `<span class="muted">${escape(d.department)}</span>` : ''}</p><dl><div><dt>Department</dt><dd><strong>${escape(d.department || 'General')}</strong></dd></div><div><dt>Room / OPD</dt><dd>${escape(d.room || 'Consultation Room')}</dd></div><div><dt>Duty Shift</dt><dd style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${icon('clock')}${d.shift_start} – ${d.shift_end}</dd></div><div><dt>License</dt><dd><code style="font-size:11px;background:var(--soft);padding:2px 6px;border-radius:4px;">${escape(d.license)}</code></dd></div>${d.phone ? `<div><dt>Direct Contact</dt><dd style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">${icon('phone')}${escape(d.phone)}</dd></div>` : ''}</dl><div class="card-actions">${button('Edit details','edit-doctors','secondary',`data-id="${d.id}"`)}${button(d.on_duty ? 'Set off duty' : 'Mark on duty','duty', d.on_duty ? 'text-button danger-text' : 'primary',`data-id="${d.id}"`)}</div></article>`).join('')}</div>`;
-  else if (page === 'beds') $('#records').innerHTML = `<div class="record-grid">${records.map(w => {
-    const pct = w.capacity ? Math.round((w.occupied / w.capacity) * 100) : 0;
-    const badgeType = w.occupied >= w.capacity ? 'full' : pct >= 80 ? 'limited' : 'available';
-    return `<article class="ward-card"><div class="card-top"><span class="ward-symbol">${icon('beds')}</span><div style="display:flex;align-items:center;gap:6px;"><span class="badge in_progress" style="font-size:10px;">${label(w.type)}</span>${badge(badgeType, `${pct}% ${badgeType}`)}</div></div><h3>${escape(w.name)}</h3><p class="specialty">${label(w.type)} care ward</p><div class="ward-number">${w.capacity - w.occupied}<span> beds available</span></div>${progress(w.occupied, w.capacity)}<div class="ward-totals"><span><strong>${w.occupied}</strong> occupied (${pct}%)</span><span><strong>${w.capacity}</strong> total capacity</span></div><div class="card-actions">${button('Update capacity','edit-beds','secondary',`data-id="${w.id}"`)}<small style="color:var(--muted);">${icon('clock')} ${date(w.updated_at)}</small></div></article>`;
-  }).join('')}</div>`;
-  else $('#records').innerHTML = `<div class="table-wrap"><table><caption class="sr-only">Patient queue records</caption><thead><tr><th>Token / arrival</th><th>Patient & clinical reason</th><th>Assigned specialist</th><th>Triage priority</th><th>Queue status</th><th>Care actions</th></tr></thead><tbody>${records.map(t => `<tr><td><strong class="token-number">#${String(t.number).padStart(3,'0')}</strong><small style="color:var(--muted);">${icon('clock')} ${date(t.created_at)}</small></td><td><strong>${escape(t.patient)}</strong><small style="color:var(--text-secondary);margin-top:2px;">${escape(t.reason)}</small></td><td>${t.doctor_name ? `<span class="badge" style="background:var(--tint);color:var(--primary);">${icon('doctors')} Dr. ${escape(t.doctor_name)}</span>` : '<span class="muted" style="font-size:12px;">Unassigned specialist</span>'}</td><td>${badge(t.priority)}</td><td>${badge(t.status)}</td><td><div class="row-actions">${t.status === 'waiting' ? button('Start consultation','token-start','primary',`data-id="${t.id}"`) : t.status === 'in_progress' ? button('Complete visit','token-complete','primary',`data-id="${t.id}"`) : '<span class="badge off_duty">Completed</span>'}${['waiting','in_progress'].includes(t.status) ? button('Cancel','token-cancel','text-button danger-text',`data-id="${t.id}"`) : ''}</div></td></tr>`).join('')}</tbody></table></div>`;
-}
-function analyticsPage() {
-  const { daily, beds } = state.analytics;
-  const arrivals = daily.reduce((n,d) => n+d.arrivals,0), completed = daily.reduce((n,d) => n+Number(d.completed),0);
-  const max = Math.max(1,...daily.map(d => d.arrivals));
-  const completionRate = arrivals ? Math.round((completed / arrivals) * 100) : 100;
-  return `<section class="stats three">${stat('Total arrivals',arrivals,`Last 30 days · ${completionRate}% completed`,'queue','blue')}${stat('Completed visits',completed,'Consultations closed successfully','shield','teal')}${stat('Emergency arrivals',daily.reduce((n,d) => n+Number(d.emergencies),0),'Immediate priority triage cases','chart','amber')}</section><section class="panel"><div class="panel-heading"><div><h2>Daily patient arrivals trend</h2><p>Rolling 30-day window · Hospital timezone Asia/Kolkata (IST)</p></div>${button('Export activity CSV','export','secondary')}</div>${daily.length ? `<div class="bar-chart" role="img" aria-label="Arrivals by day. Exact values are in the table below.">${daily.map(d => `<div class="bar-column"><span><strong>${d.arrivals}</strong></span><svg viewBox="0 0 30 120" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)"/><stop offset="100%" stop-color="var(--primary-dark)"/></linearGradient></defs><rect x="3" y="${120-d.arrivals/max*110}" width="24" height="${d.arrivals/max*110}" rx="5" fill="url(#barGrad)"/></svg><small>${d.visit_date.slice(8)}</small></div>`).join('')}</div><div class="table-wrap"><table><caption class="sr-only">Daily patient activity and actual wait times</caption><thead><tr><th>Date</th><th>Patient arrivals</th><th>Completed visits</th><th>Cancelled</th><th>Average wait to consult</th></tr></thead><tbody>${daily.map(d => `<tr><td><strong>${escape(d.visit_date)}</strong></td><td><span class="badge in_progress">${d.arrivals} arrivals</span></td><td><span class="badge available">${d.completed}</span></td><td><span class="badge ${d.cancelled ? 'cancelled' : 'off_duty'}">${d.cancelled}</span></td><td><span style="font-weight:600;color:var(--text);">${d.average_wait === null ? '—' : `${d.average_wait} min`}</span></td></tr>`).join('')}</tbody></table></div>` : empty('Insights start with real activity','Create patient tokens to build your hospital’s activity history.')}</section><section class="panel section-gap"><div class="panel-heading"><div><h2>Bed capacity snapshot history</h2><p>Latest 60 saved ward allocation changes within the last 30 days</p></div></div>${beds.length ? `<div class="table-wrap"><table><thead><tr><th>Recorded timestamp</th><th>Total hospital capacity</th><th>Occupied beds</th><th>Capacity utilization</th></tr></thead><tbody>${beds.slice().reverse().map(b => {
-    const util = b.capacity ? Math.round(b.occupied / b.capacity * 100) : 0;
-    const badgeCls = util >= 90 ? 'full' : util >= 75 ? 'limited' : 'available';
-    return `<tr><td><small style="color:var(--muted);">${icon('clock')} ${date(b.created_at)}</small></td><td><strong>${b.capacity} beds</strong></td><td><strong>${b.occupied} occupied</strong></td><td><span class="badge ${badgeCls}">${util}% utilized</span></td></tr>`;
-  }).join('')}</tbody></table></div>` : empty('No capacity history yet','Adding or updating a ward records a capacity snapshot.')}</section>`;
-}
-function auditPage() {
-  const { items,total,page: current,pageSize } = state.audit;
-  const actionBadge = act => {
-    const s = String(act).toLowerCase();
-    const cls = s.includes('delete') || s.includes('cancel') ? 'emergency' : s.includes('create') || s.includes('login') ? 'available' : 'in_progress';
-    return `<span class="badge ${cls}" style="font-size:10px;">${escape(act)}</span>`;
-  };
-  return `<section class="panel"><div class="panel-heading"><div><h2>Workspace operational audit trail</h2><p>Server-signed immutability log · <span class="badge in_progress">${total} recorded events</span></p></div>${icon('shield')}</div><form id="audit-search" class="toolbar"><label class="search">${icon('search')}<input name="q" type="search" maxlength="120" value="${escape(state.auditQuery)}" aria-label="Search audit history" placeholder="Search activity description or administrator email…"/></label><button class="secondary" type="submit">${icon('search')} Filter trail</button></form>${items.length ? `<div class="table-wrap"><table><caption class="sr-only">Audit history</caption><thead><tr><th>Logged timestamp</th><th>Action type</th><th>Event operational details</th><th>Administrator identity</th></tr></thead><tbody>${items.map(a => `<tr><td class="nowrap"><small style="color:var(--muted);">${icon('clock')} ${date(a.created_at)}</small></td><td>${actionBadge(a.action)}</td><td><strong>${escape(a.details)}</strong></td><td><span class="badge off_duty">${escape(a.actor)}</span></td></tr>`).join('')}</tbody></table></div>` : empty('No matching activity','Try a different search query. Recorded system changes will appear here.')}<div class="pagination"><span>Page ${current} of ${Math.max(1,Math.ceil(total/pageSize))} (${total} total events)</span><div>${button('Previous page','audit-prev','secondary',current === 1 ? 'disabled' : '')}${button('Next page','audit-next','secondary',current*pageSize >= total ? 'disabled' : '')}</div></div></section>`;
-}
-let refreshBusy = false;
+
 async function refresh() {
-  if (refreshBusy) return; refreshBusy = true;
-  const refreshButton = $('[data-action="refresh"]'); if (refreshButton) refreshButton.disabled = true;
-  const oldSearch = $('#search')?.value, oldFilter = $('#filter')?.value;
-  try {
-    const { hospital } = await api('/me');
-    state.hospital.status = hospital.status;
-    $('#current-status').textContent = label(hospital.status);
-    $('#hospital-status').value = hospital.status;
-    if (page === 'dashboard') { const [summary,wards] = await Promise.all([api('/summary'),api('/wards')]); state.summary = summary; state.wards = wards.items; }
-    if (page === 'doctors') state.doctors = (await api('/doctors')).items;
-    if (page === 'beds') state.wards = (await api('/wards')).items;
-    if (page === 'tokens') { const [tokens,doctors] = await Promise.all([api('/tokens'),api('/doctors')]); state.tokens = tokens.items; state.doctors = doctors.items; }
-    if (page === 'analytics') state.analytics = await api('/analytics');
-    if (page === 'audit') state.audit = await api(`/audit?page=${state.auditPage}&q=${encodeURIComponent(state.auditQuery)}`);
-    $('#content').innerHTML = ({ dashboard, doctors: doctorsPage, beds: bedsPage, tokens: tokensPage, analytics: analyticsPage, audit: auditPage })[page]();
-    if ($('#search')) { if (oldSearch !== undefined) $('#search').value = oldSearch; if (oldFilter !== undefined) $('#filter').value = oldFilter; $('#search').addEventListener('input',renderRecords); $('#filter').addEventListener('change',renderRecords); renderRecords(); }
-    $('#audit-search')?.addEventListener('submit', event => { event.preventDefault(); state.auditQuery = new FormData(event.target).get('q'); state.auditPage = 1; refresh(); });
-    $('#updated').textContent = `Updated ${new Intl.DateTimeFormat('en-IN', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }).format(new Date())} IST`;
-    $('#notice').hidden = true;
-  } catch (error) {
-    notice(error.message,true);
-    if ($('#content .loading')) $('#content').innerHTML = empty('Your records could not be loaded','Use Refresh to try again.');
-  } finally { refreshBusy = false; if (refreshButton) refreshButton.disabled = false; }
+  await loadData();
+  $('#content').innerHTML = page === 'dashboard' || page === 'tokens' ? renderDashboard() : renderSecondaryPage(page);
+  attachEventListeners();
 }
 
-function editor(kind, id) {
-  const collection = kind === 'doctors' ? state.doctors : kind === 'beds' ? state.wards : [];
-  const item = collection.find(i => i.id === id); const v = item || {};
-  let fields;
-  if (kind === 'doctors') fields = field('name','Full name','text',v.name,'maxlength="120"') + field('specialty','Specialty','text',v.specialty,'maxlength="120"') + field('license','Medical license number','text',v.license,'maxlength="80"') + field('department','Department','text',v.department,'maxlength="120"',false) + field('phone','Phone','tel',v.phone,'maxlength="30"',false) + field('email','Email','email',v.email,'maxlength="254"',false) + field('room','Room / OPD','text',v.room,'maxlength="40"',false) + select('on_duty','Duty status',[['false','Off duty'],['true','On duty']], String(Boolean(v.on_duty))) + field('shift_start','Shift starts','time',v.shift_start || '09:00') + field('shift_end','Shift ends','time',v.shift_end || '17:00') + '<p class="helper full-span">Shift times are in Asia/Kolkata. Duty status is set manually; overnight shifts are supported.</p>';
-  if (kind === 'beds') fields = field('name','Ward name','text',v.name,'maxlength="120"') + select('type','Ward type',[['general','General'],['emergency','Emergency'],['icu','ICU']], v.type || 'general') + field('capacity','Total bed capacity','number',v.capacity ?? '', 'min="1" max="100000" step="1"') + field('occupied','Occupied beds','number',v.occupied ?? 0, 'min="0" max="100000" step="1"') + '<p class="helper full-span">Enter actual counts. Availability is calculated from capacity and occupancy.</p>';
-  if (kind === 'tokens') fields = field('patient','Patient name','text','','maxlength="120"') + field('reason','Reason for visit','text','','maxlength="500"') + select('priority','Priority',[['routine','Routine'],['urgent','Urgent'],['emergency','Emergency']],'routine') + select('doctor_id','Assigned doctor',[['','Unassigned'],...state.doctors.map(d => [d.id,`${d.name} · ${d.on_duty ? 'on duty' : 'off duty'}`])],'',false) + '<p class="helper full-span">The token number and arrival time are assigned when you save.</p>';
-  const dialog = $('#editor');
-  dialog.innerHTML = `<form id="record-form"><div class="dialog-header"><div><span class="eyebrow">${kind === 'tokens' ? 'PATIENT ARRIVAL & TRIAGE' : 'CLINICAL WORKSPACE RECORD'}</span><h2 id="dialog-title">${item ? 'Edit' : 'Add new'} ${kind === 'doctors' ? 'doctor specialist' : kind === 'beds' ? 'hospital ward' : 'patient arrival token'}</h2></div><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close dialog">${icon('close')}</button></div><div class="form-error" role="alert" tabindex="-1" hidden></div><div class="form-grid">${fields}</div><div class="dialog-footer">${item ? button('Remove record',`remove-${kind}`,'text-button danger-text',`data-id="${id}"`) : '<span class="muted" style="font-size:12px;">' + icon('shield') + ' Changes logged to operational audit trail</span>'}<div><button class="secondary" type="button" data-action="close-dialog">Cancel</button><button class="primary" type="submit">${item ? 'Save changes' : 'Create record'}</button></div></div></form>`;
-  dialog.showModal();
-  $('#record-form').addEventListener('submit', event => { event.preventDefault(); submitForm(event.currentTarget, async data => {
-    if (kind === 'doctors') data.on_duty = data.on_duty === 'true';
-    if (kind === 'beds') { data.capacity = Number(data.capacity); data.occupied = Number(data.occupied); }
-    if (kind === 'tokens') data.doctor_id = data.doctor_id || null;
-    if (item) data.version = item.version;
-    await api(`/${kind === 'beds' ? 'wards' : kind}${item ? '/'+id : ''}`, { method: item ? 'PUT' : 'POST', body: data });
-    dialog.close(); await refresh(); notice('Record saved.');
-  }); });
-}
-function confirmAction(title, description, callback) {
-  const dialog = $('#editor'); if (dialog.open) dialog.close();
-  dialog.innerHTML = `<form id="confirm-form"><div class="dialog-header"><h2 id="dialog-title">${title}</h2><button type="button" class="icon-button" data-action="close-dialog" aria-label="Close dialog">${icon('close')}</button></div><p>${description}</p><div class="form-error" role="alert" tabindex="-1" hidden></div><div class="dialog-footer"><span></span><div><button type="button" class="secondary" data-action="close-dialog" autofocus>Keep record</button><button type="submit" class="danger">Confirm</button></div></div></form>`;
-  dialog.showModal();
-  $('#confirm-form').addEventListener('submit', event => { event.preventDefault(); submitForm(event.currentTarget, async () => { await callback(); dialog.close(); await refresh(); notice('Change saved.'); }); });
-}
-function exportCSV() {
-  if (!state.analytics.daily.length) { notice('There is no activity to export yet.',true); return; }
-  const rows = [['Date','Arrivals','Completed','Cancelled','Emergencies','Average wait (minutes)'],...state.analytics.daily.map(d => [d.visit_date,d.arrivals,d.completed,d.cancelled,d.emergencies,d.average_wait ?? ''])];
-  const csv = rows.map(row => row.map(v => '"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n');
-  const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
-  const a = document.createElement('a'); a.href = url; a.download = 'unihealth-activity.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(url),1000);
-}
 document.addEventListener('click', async event => {
-  const auth = event.target.closest('[data-auth]'); if (auth) { history.replaceState(null,'','/index.html'); authView(auth.dataset.auth); return; }
-  const target = event.target.closest('[data-action]'); if (!target || target.disabled) return;
-  const { action,id } = target.dataset;
-  try {
-    if (action === 'theme') toggleTheme();
-    else if (action === 'menu') {
-      const open = $('#sidebar').classList.toggle('is-open');
-      target.setAttribute('aria-expanded',String(open));
-      $('#sidebar-backdrop')?.classList.toggle('is-open', open);
-    } else if (action === 'close-sidebar') {
-      $('#sidebar')?.classList.remove('is-open');
-      $('#sidebar-backdrop')?.classList.remove('is-open');
-      $('[data-action="menu"]')?.setAttribute('aria-expanded','false');
-    }
-    else if (action === 'refresh') await refresh();
-    else if (action === 'logout') { target.disabled = true; await api('/auth/logout',{ method: 'POST', body: {} }); location.assign('/index.html'); }
-    else if (action.startsWith('add-') || action.startsWith('edit-')) editor(action.split('-')[1],id);
-    else if (action === 'close-dialog') $('#editor').close();
-    else if (action.startsWith('remove-')) {
-      const kind = action.split('-')[1], item = (kind === 'doctors' ? state.doctors : state.wards).find(v => v.id === id);
-      confirmAction('Remove this record?',`Remove <strong>${escape(item.name)}</strong> from this workspace? The audit history will be retained.`,() => api(`/${kind === 'beds' ? 'wards' : 'doctors'}/${id}`,{ method: 'DELETE',body: { version: item.version } }));
-    } else if (action === 'duty') {
-      const d = state.doctors.find(d => d.id === id);
-      const body = Object.fromEntries(['name','specialty','license','phone','email','department','room','shift_start','shift_end','version'].map(k => [k,d[k]])); body.on_duty = !d.on_duty;
-      target.disabled = true; await api('/doctors/'+id,{ method: 'PUT',body }); await refresh(); notice('Duty status updated.');
-    } else if (action.startsWith('token-')) {
-      const t = state.tokens.find(t => t.id === id), status = { 'token-start': 'in_progress', 'token-complete': 'completed', 'token-cancel': 'cancelled' }[action];
-      const change = () => api('/tokens/'+id,{ method: 'PATCH',body: { status,version: t.version } });
-      if (status === 'cancelled') confirmAction('Cancel this token?',`Token #${t.number} for ${escape(t.patient)} will be closed. Its history will be retained.`,change);
-      else { target.disabled = true; await change(); await refresh(); notice('Queue updated.'); }
-    } else if (action === 'audit-prev' || action === 'audit-next') { state.auditPage += action === 'audit-prev' ? -1 : 1; await refresh(); }
-    else if (action === 'export') exportCSV();
-  } catch (error) { notice(error.message,true); target.disabled = false; }
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') {
-    $('#sidebar')?.classList.remove('is-open');
-    $('[data-action="menu"]')?.setAttribute('aria-expanded','false');
-    const ed = $('#editor');
-    if (ed && ed.open) ed.close();
-  }
-  if ((event.altKey && event.key === 'r') || (event.altKey && event.key === 'R')) {
-    event.preventDefault();
-    refresh();
-  }
-});
-async function init() {
-  const isDemoUrl = window.location.search.includes('demo') || window.location.hash.includes('demo');
-  if (isDemoUrl) {
-    localStorage.setItem('uh_demo_active', 'true');
-    if (page === 'auth') {
-      location.assign('/hospital-dashboard.html');
-      return;
-    }
-  }
+  const target = event.target.closest('[data-action]');
+  if (!target) return;
+  const { action, id } = target.dataset;
 
-  if (page === 'auth') {
-    authView();
-    return;
-  }
-
-  try {
-    state.hospital = (await api('/me')).hospital;
-    shell();
-    await refresh();
-  } catch (error) {
-    console.warn('Backend unavailable or session expired. Engaging Demo Workspace fallback:', error);
-    localStorage.setItem('uh_demo_active', 'true');
-    try {
-      state.hospital = (await mockApi('/me')).hospital;
-      shell();
+  if (action === 'theme') {
+    toggleTheme();
+  } else if (action === 'close-dialog') {
+    $('#editor')?.close();
+  } else if (action === 'open-icu-modal') {
+    promptIcuReserveModal();
+  } else if (action === 'ticket-actions') {
+    promptTicketAction(id);
+  } else if (action === 'token-start') {
+    const t = state.tokens.find(item => item.id === id);
+    if (t) {
+      await api(`/tokens/${id}`, { method: 'PATCH', body: { status: 'in_progress', version: t.version } });
+      $('#editor')?.close();
       await refresh();
-    } catch (fallbackErr) {
-      $('#app').innerHTML = `<main class="connection-error"><h1>Unable to open your workspace</h1><p>${escape(fallbackErr.message)}</p><a class="primary" href="/hospital-dashboard.html?demo=true">Open Demo Workspace</a></main>`;
+      notice(`Consultation started for Token #${t.number}.`);
     }
+  } else if (action === 'token-complete') {
+    const t = state.tokens.find(item => item.id === id);
+    if (t) {
+      await api(`/tokens/${id}`, { method: 'PATCH', body: { status: 'completed', version: t.version } });
+      $('#editor')?.close();
+      await refresh();
+      notice(`Token #${t.number} marked as completed and discharged.`);
+    }
+  } else if (action === 'token-cancel') {
+    const t = state.tokens.find(item => item.id === id);
+    if (t) {
+      await api(`/tokens/${id}`, { method: 'PATCH', body: { status: 'cancelled', version: t.version } });
+      $('#editor')?.close();
+      await refresh();
+      notice(`Token #${t.number} cancelled.`);
+    }
+  } else if (action === 'toggle-duty') {
+    const d = state.doctors.find(item => item.id === id);
+    if (d) {
+      await api(`/doctors/${id}`, { method: 'PUT', body: { ...d, on_duty: !d.on_duty } });
+      await refresh();
+      notice(`Dr. ${d.name} marked ${!d.on_duty ? 'ON DUTY' : 'OFF DUTY'}.`);
+    }
+  } else if (action === 'refresh') {
+    await refresh();
+    notice('Live hospital records refreshed.');
   }
+});
+
+document.addEventListener('keydown', event => {
+  if ((event.ctrlKey || event.metaKey) && (event.key === 'k' || event.key === 'K')) {
+    event.preventDefault();
+    $('#ref-global-search')?.focus();
+  }
+  if (event.key === 'Escape') {
+    $('#editor')?.close();
+  }
+});
+
+async function init() {
+  await loadData();
+  const currentStatus = localStorage.getItem('uh_hospital_status') || state.hospital.status || 'normal';
+  state.hospital.status = currentStatus;
+  shell();
 }
+
 init();
