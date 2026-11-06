@@ -260,7 +260,7 @@ app.use('/api', (_req, res) => res.status(404).json({ error: 'Endpoint not found
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 // Only explicit public files are served; credentials and backend sources are private.
-for (const file of ['index.html','hospital-dashboard.html','hospital-doctors.html','hospital-beds.html','hospital-tokens.html','hospital-analytics.html','hospital-audit.html','hospital-style.css','app.js']) {
+for (const file of ['index.html','hospital-dashboard.html','hospital-doctors.html','hospital-beds.html','hospital-tokens.html','hospital-emergency.html','hospital-care-notes.html','hospital-analytics.html','hospital-audit.html','hospital-settings.html','hospital-style.css','hospital-tokens.css','app.js']) {
   app.get('/' + file, (_req, res) => res.sendFile(file, { root }));
 }
 app.get('/', (_req, res) => res.sendFile('index.html', { root }));

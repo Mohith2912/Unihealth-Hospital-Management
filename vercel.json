@@ -6,9 +6,11 @@
     { "src": "/hospital-doctors", "dest": "/hospital-doctors.html" },
     { "src": "/hospital-beds", "dest": "/hospital-beds.html" },
     { "src": "/hospital-tokens", "dest": "/hospital-tokens.html" },
+    { "src": "/hospital-emergency", "dest": "/hospital-emergency.html" },
+    { "src": "/hospital-care-notes", "dest": "/hospital-care-notes.html" },
     { "src": "/hospital-analytics", "dest": "/hospital-analytics.html" },
     { "src": "/hospital-audit", "dest": "/hospital-audit.html" },
+    { "src": "/hospital-settings", "dest": "/hospital-settings.html" },
     { "src": "/(.*)", "dest": "/$1" }
   ]
 }
-
