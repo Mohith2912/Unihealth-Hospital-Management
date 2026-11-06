@@ -89,3 +89,16 @@ The platform features a state-driven reactive design system that dynamically alt
 - **Search Inputs**: Debounced at `180ms` to eliminate render thrashing during medication and patient lookup.
 - **Mode Switching**: Throttled with `350ms cubic-bezier(0.4, 0, 0.2, 1)` smooth easing to guarantee stutter-free visual shifts.
 - **Cross-App Sync**: Local storage broadcast listener (`window.addEventListener('storage')`) synchronizes mode changes across Hospital, Pharmacy, and Patient Companion simultaneously.
+
+
+### D. Reference Visual Composition ('Clinical SaaS Pro Max')
+- **Dark Teal Navigation Sidebar**: Deep teal gradient (#12343B -> #005A63) with crisp white typography, #00A896 active nav pill, and architectural medical center exterior graphic at the bottom.
+- **Top Executive Bar**: Unified search capsule with Ctrl+K shortcut, light/dark mode switch, notification indicator, and Dr. Mohith Dharshan (Hospital Administrator) profile chip.
+- **Full-Width Mode Strip**: Segmented mode switcher for Normal, Surge, and Emergency with Code Red safety confirmation dialog.
+- **Three-Panel Operational Row**:
+  - Ward Occupancy: SVG radial donut gauge (78% overall occupancy) with live breakdown bars.
+  - Recent Activity: Live audit feed with color-coded circular icons (cyan for beds, purple for tokens, green for medicines).
+  - Today's Summary: Calendar-tagged operational metrics for admissions, discharges, surgeries, and emergency cases.
+- **Bottom Operational Grid**:
+  - Wide OPD Triage Queue table with 15 clinical tickets, multi-filter dropdowns, and care action triggers.
+  - ICU & Critical Care feature card with operating theater visual and rapid bed allocation modal.
